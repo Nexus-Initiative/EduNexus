@@ -11,62 +11,62 @@ EduNexus aims to become the operating system for African schools, centralizing a
 
 The Student Information System:
 
- * Schools
+*  Schools
   
-  Students
+*  Students
   
-  Parents
+*  Parents
   
-  Teachers
+*  Teachers
   
-  Classes
+*  Classes
   
-  Subjects
+*  Subjects
   
 ## Version 0.2
 
 The Academic Module:
 
-  Grades
+*  Grades
   
-  Report Cards
+*  Report Cards
   
-  Transcripts
+*  Transcripts
   
 ## Version 0.3
 
 The Attendance:
 
-  Teacher Attendance Entry
+*  Teacher Attendance Entry
   
-  Student Attendance Dashboard
+*  Student Attendance Dashboard
   
-  Absentee Alerts
+*  Absentee Alerts
   
 ## Version 0.4
 
 The Library Module:
 
-  Books
+*  Books
  
-  Book Copies
+*  Book Copies
   
-  Loans
+*  Loans
   
-  Returns
+*  Returns
   
-  Overdue Tracking
+*  Overdue Tracking
 
 ## Version 0.5
 
 The Parent Portal:
 
   
-  Grades
+*  Grades
 
-  Attendance
+*  Attendance
   
-  Fee Balance
+*  Fee Balance
 
 ---
 
