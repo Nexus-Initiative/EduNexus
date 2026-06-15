@@ -144,3 +144,217 @@ Ref: classes.class_teacher_id > staff.staff_id
 
 Ref: teacher_subjects.staff_id > staff.staff_id
 Ref: teacher_subjects.subject_id > subjects.subject_id
+
+
+## ACADEMIC YEARS
+Table academic_years {
+  academic_year_id int [pk]
+  school_id int
+  year_name varchar
+  start_date date
+  end_date date
+  status varchar
+}
+
+Ref: academic_years.school_id > schools.school_id
+
+## TERMS
+Table terms {
+  term_id int [pk]
+  academic_year_id int
+  term_name varchar
+  start_date date
+  end_date date
+}
+
+Ref: terms.academic_year_id > academic_years.academic_year_id
+
+## STUDENT CLASS HISTORY
+Table student_classes {
+  student_class_id int [pk]
+  student_id int
+  class_id int
+  academic_year_id int
+  term_id int
+  date_joined date
+  date_left date
+}
+
+Ref: student_classes.student_id > students.student_id
+Ref: student_classes.class_id > classes.class_id
+Ref: student_classes.academic_year_id > academic_years.academic_year_id
+Ref: student_classes.term_id > terms.term_id
+
+## CONVERSATION PARTICIPANTS
+Table conversations {
+  conversation_id int [pk]
+  conversation_type varchar
+}
+
+Table conversation_participants {
+  participant_id int [pk]
+  conversation_id int
+  user_id int
+  joined_at timestamp
+}
+
+Table messages {
+  message_id int [pk]
+  conversation_id int
+  sender_id int
+  message_content text
+  created_at timestamp
+}
+
+Ref: conversation_participants.conversation_id > conversations.conversation_id
+Ref: conversation_participants.user_id > users.user_id
+
+Ref: messages.conversation_id > conversations.conversation_id
+Ref: messages.sender_id > users.user_id
+
+## NOTIFICATIONS
+Table notifications {
+  notification_id int [pk]
+  user_id int
+  title varchar
+  message text
+  notification_type varchar
+  is_read boolean
+  created_at timestamp
+}
+
+Ref: notifications.user_id > users.user_id
+
+## AUDIT LOGS
+Table audit_logs {
+  audit_log_id int [pk]
+  user_id int
+  action varchar
+  module_name varchar
+  record_id int
+  created_at timestamp
+}
+
+Ref: audit_logs.user_id > users.user_id
+
+## ASSIGNMENTS
+Table assignments {
+  assignment_id int [pk]
+  subject_id int
+  staff_id int
+  class_id int
+  title varchar
+  description text
+  due_date date
+  created_at timestamp
+}
+
+Ref: assignments.subject_id > subjects.subject_id
+Ref: assignments.staff_id > staff.staff_id
+Ref: assignments.class_id > classes.class_id
+
+## STUDENT ASSIGNMENTS
+Table student_assignments {
+  student_assignment_id int [pk]
+  assignment_id int
+  student_id int
+  submission_date timestamp
+  score decimal
+  feedback text
+}
+
+Ref: student_assignments.assignment_id > assignments.assignment_id
+Ref: student_assignments.student_id > students.student_id
+
+## EXAMS
+Table exams {
+  exam_id int [pk]
+  term_id int
+  class_id int
+  subject_id int
+  created_by int
+
+  exam_name varchar
+  exam_type varchar
+
+  total_marks decimal
+
+  exam_date date
+
+  is_past_paper boolean
+
+  created_at timestamp
+}
+
+Ref: exams.term_id > terms.term_id
+Ref: exams.class_id > classes.class_id
+Ref: exams.subject_id > subjects.subject_id
+Ref: exams.created_by > staff.staff_id
+
+
+## RESULTS
+Table results {
+  result_id int [pk]
+  exam_id int
+  student_id int
+  subject_id int
+  marks decimal
+  grade varchar
+  remarks varchar
+}
+
+Ref: results.exam_id > exams.exam_id
+Ref: results.student_id > students.student_id
+Ref: results.subject_id > subjects.subject_id
+
+## Exam Papers
+Table exam_papers {
+  exam_paper_id int [pk]
+
+  exam_id int
+
+  file_url text
+
+  file_type varchar
+
+  uploaded_at timestamp
+}
+Ref: exam_papers.exam_id > exams.exam_id
+
+## Exam Questions
+
+Table exam_questions {
+  question_id int [pk]
+
+  exam_id int
+
+  question_number int
+
+  question_text text
+
+  marks decimal
+}
+Ref: exam_questions.exam_id > exams.exam_id
+
+## Past Papers Repository
+Table past_papers {
+  past_paper_id int [pk]
+
+  exam_id int
+
+  subject_id int
+
+  class_id int
+
+  year int
+
+  term_id int
+
+  paper_type varchar
+
+  uploaded_at timestamp
+}
+Ref: past_papers.exam_id > exams.exam_id
+Ref: past_papers.subject_id > subjects.subject_id
+Ref: past_papers.class_id > classes.class_id
+Ref: past_papers.term_id > terms.term_id
