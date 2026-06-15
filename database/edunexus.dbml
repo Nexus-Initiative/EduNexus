@@ -1,5 +1,10 @@
 //////////////////////////////////////////////////////
-// EDUNEXUS CORE FOUNDATION
+// EDUNEXUS LAYER 1
+// CORE FOUNDATION
+//////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+// SCHOOLS
 //////////////////////////////////////////////////////
 
 Table schools {
@@ -23,6 +28,21 @@ Table schools {
 
   created_at timestamp
   updated_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// SCHOOL SETTINGS
+//////////////////////////////////////////////////////
+
+Table school_settings {
+  setting_id int [pk]
+
+  school_id int
+
+  setting_key varchar
+  setting_value text
+
+  created_at timestamp
 }
 
 //////////////////////////////////////////////////////
@@ -99,8 +119,32 @@ Table role_permissions {
 }
 
 //////////////////////////////////////////////////////
+// SHARED MEDIA FILES
+//////////////////////////////////////////////////////
+
+Table media_files {
+  file_id int [pk]
+
+  school_id int
+
+  uploaded_by int
+
+  file_name varchar
+  file_type varchar
+
+  file_url text
+
+  entity_type varchar
+  entity_id int
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
 // RELATIONSHIPS
 //////////////////////////////////////////////////////
+
+Ref: school_settings.school_id > schools.school_id
 
 Ref: users.school_id > schools.school_id
 
@@ -110,9 +154,13 @@ Ref: user_roles.role_id > roles.role_id
 Ref: role_permissions.role_id > roles.role_id
 Ref: role_permissions.permission_id > permissions.permission_id
 
+Ref: media_files.school_id > schools.school_id
+Ref: media_files.uploaded_by > users.user_id
+
+
 //////////////////////////////////////////////////////
 // EDUNEXUS LAYER 2
-// ACADEMIC SYSTEM
+// ACADEMIC MANAGEMENT SYSTEM
 //////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////
@@ -125,6 +173,7 @@ Table academic_years {
   school_id int
 
   year_name varchar
+
   start_date date
   end_date date
 
@@ -158,6 +207,7 @@ Table departments {
   school_id int
 
   department_name varchar
+
   description text
 }
 
@@ -291,6 +341,101 @@ Table teacher_subjects {
 }
 
 //////////////////////////////////////////////////////
+// SYLLABUS COMPLETION
+//////////////////////////////////////////////////////
+
+Table syllabus_completion {
+  completion_id int [pk]
+
+  subject_id int
+  class_id int
+
+  teacher_id int
+
+  academic_year_id int
+  term_id int
+
+  completion_percentage decimal
+
+  syllabus_completed boolean
+
+  completion_date date
+
+  remarks text
+
+  approved_by int
+}
+
+//////////////////////////////////////////////////////
+// TEACHING ASSIGNMENTS
+//////////////////////////////////////////////////////
+
+Table teaching_assignments {
+  assignment_id int [pk]
+
+  staff_id int
+
+  subject_id int
+
+  class_id int
+
+  academic_year_id int
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// TIMETABLES
+//////////////////////////////////////////////////////
+
+Table timetables {
+  timetable_id int [pk]
+
+  school_id int
+
+  academic_year_id int
+
+  term_id int
+
+  class_id int
+
+  timetable_name varchar
+
+  status varchar
+
+  created_by int
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// TIMETABLE ENTRIES
+//////////////////////////////////////////////////////
+
+Table timetable_entries {
+  entry_id int [pk]
+
+  timetable_id int
+
+  class_id int
+
+  subject_id int
+
+  teacher_id int
+
+  teaching_assignment_id int
+
+  day_of_week varchar
+
+  start_time time
+  end_time time
+
+  room_name varchar
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
 // ASSIGNMENTS
 //////////////////////////////////////////////////////
 
@@ -304,6 +449,7 @@ Table assignments {
   class_id int
 
   title varchar
+
   description text
 
   due_date date
@@ -392,6 +538,48 @@ Table resources {
 }
 
 //////////////////////////////////////////////////////
+// STUDENT DOCUMENTS
+//////////////////////////////////////////////////////
+
+Table student_documents {
+  document_id int [pk]
+
+  student_id int
+
+  file_id int
+
+  document_name varchar
+
+  document_type varchar
+
+  uploaded_by int
+
+  uploaded_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// ACADEMIC CALENDAR EVENTS
+//////////////////////////////////////////////////////
+
+Table academic_events {
+  event_id int [pk]
+
+  school_id int
+
+  term_id int
+
+  event_name varchar
+
+  event_date date
+
+  event_type varchar
+
+  description text
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
 // RELATIONSHIPS
 //////////////////////////////////////////////////////
 
@@ -425,6 +613,23 @@ Ref: subjects.department_id > departments.department_id
 Ref: teacher_subjects.staff_id > staff.staff_id
 Ref: teacher_subjects.subject_id > subjects.subject_id
 
+Ref: teaching_assignments.staff_id > staff.staff_id
+Ref: teaching_assignments.subject_id > subjects.subject_id
+Ref: teaching_assignments.class_id > classes.class_id
+Ref: teaching_assignments.academic_year_id > academic_years.academic_year_id
+
+Ref: timetables.school_id > schools.school_id
+Ref: timetables.academic_year_id > academic_years.academic_year_id
+Ref: timetables.term_id > terms.term_id
+Ref: timetables.class_id > classes.class_id
+Ref: timetables.created_by > users.user_id
+
+Ref: timetable_entries.timetable_id > timetables.timetable_id
+Ref: timetable_entries.class_id > classes.class_id
+Ref: timetable_entries.subject_id > subjects.subject_id
+Ref: timetable_entries.teacher_id > staff.staff_id
+Ref: timetable_entries.teaching_assignment_id > teaching_assignments.assignment_id
+
 Ref: assignments.subject_id > subjects.subject_id
 Ref: assignments.staff_id > staff.staff_id
 Ref: assignments.class_id > classes.class_id
@@ -443,149 +648,23 @@ Ref: results.subject_id > subjects.subject_id
 Ref: resources.subject_id > subjects.subject_id
 Ref: resources.uploaded_by > users.user_id
 
-//////////////////////////////////////////////////////
-// EDUNEXUS CORE ACADEMIC EXTENSIONS
-//////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////
-// SCHOOL SETTINGS
-//////////////////////////////////////////////////////
-
-Table school_settings {
-setting_id int [pk]
-
-school_id int
-
-setting_key varchar
-setting_value text
-
-created_at timestamp
-}
-
-//////////////////////////////////////////////////////
-// ACADEMIC CALENDAR EVENTS
-//////////////////////////////////////////////////////
-
-Table academic_events {
-event_id int [pk]
-
-school_id int
-term_id int
-
-event_name varchar
-event_date date
-
-event_type varchar
-
-description text
-
-created_at timestamp
-}
-
-//////////////////////////////////////////////////////
-// STUDENT DOCUMENTS
-//////////////////////////////////////////////////////
-
-Table student_documents {
-document_id int [pk]
-
-student_id int
-
-document_name varchar
-document_type varchar
-
-file_url text
-
-uploaded_by int
-
-uploaded_at timestamp
-}
-
-//////////////////////////////////////////////////////
-// TIMETABLES
-//////////////////////////////////////////////////////
-
-Table timetables {
-timetable_id int [pk]
-
-school_id int
-academic_year_id int
-term_id int
-class_id int
-
-created_by int
-
-created_at timestamp
-}
-
-//////////////////////////////////////////////////////
-// TIMETABLE ENTRIES
-//////////////////////////////////////////////////////
-
-Table timetable_entries {
-entry_id int [pk]
-
-timetable_id int
-
-subject_id int
-teacher_id int
-
-room_name varchar
-
-day_of_week varchar
-
-start_time time
-end_time time
-}
-
-//////////////////////////////////////////////////////
-// MEDIA FILES
-//////////////////////////////////////////////////////
-
-Table media_files {
-file_id int [pk]
-
-school_id int
-
-uploaded_by int
-
-file_name varchar
-file_type varchar
-
-file_url text
-
-created_at timestamp
-}
-
-//////////////////////////////////////////////////////
-// RELATIONSHIPS
-//////////////////////////////////////////////////////
-
-Ref: school_settings.school_id > schools.school_id
+Ref: student_documents.student_id > students.student_id
+Ref: student_documents.file_id > media_files.file_id
+Ref: student_documents.uploaded_by > users.user_id
 
 Ref: academic_events.school_id > schools.school_id
 Ref: academic_events.term_id > terms.term_id
 
-Ref: student_documents.student_id > students.student_id
-Ref: student_documents.uploaded_by > users.user_id
-
-Ref: timetables.school_id > schools.school_id
-Ref: timetables.academic_year_id > academic_years.academic_year_id
-Ref: timetables.term_id > terms.term_id
-Ref: timetables.class_id > classes.class_id
-Ref: timetables.created_by > users.user_id
-
-Ref: timetable_entries.timetable_id > timetables.timetable_id
-Ref: timetable_entries.subject_id > subjects.subject_id
-Ref: timetable_entries.teacher_id > staff.staff_id
-
-Ref: media_files.school_id > schools.school_id
-Ref: media_files.uploaded_by > users.user_id
-
+Ref: syllabus_completion.subject_id > subjects.subject_id
+Ref: syllabus_completion.class_id > classes.class_id
+Ref: syllabus_completion.teacher_id > staff.staff_id
+Ref: syllabus_completion.academic_year_id > academic_years.academic_year_id
+Ref: syllabus_completion.term_id > terms.term_id
+Ref: syllabus_completion.approved_by > users.user_id
 
 //////////////////////////////////////////////////////
 // EDUNEXUS LAYER 3
-// COMMUNICATION SYSTEM
+// COMMUNICATION, COLLABORATION & ENGAGEMENT SYSTEM
 //////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////
@@ -598,7 +677,6 @@ Table conversations {
   school_id int
 
   conversation_name varchar
-
   conversation_type varchar
 
   created_by int
@@ -614,7 +692,6 @@ Table conversation_participants {
   participant_id int [pk]
 
   conversation_id int
-
   user_id int
 
   joined_at timestamp
@@ -628,7 +705,6 @@ Table messages {
   message_id int [pk]
 
   conversation_id int
-
   sender_id int
 
   message_content text
@@ -641,14 +717,13 @@ Table messages {
 }
 
 //////////////////////////////////////////////////////
-// MESSAGE READS
+// MESSAGE READ RECEIPTS
 //////////////////////////////////////////////////////
 
 Table message_reads {
   message_read_id int [pk]
 
   message_id int
-
   user_id int
 
   read_at timestamp
@@ -666,10 +741,13 @@ Table announcements {
   created_by int
 
   title varchar
-
   content text
 
   target_audience varchar
+
+  publish_date timestamp
+
+  expiry_date timestamp
 
   created_at timestamp
 }
@@ -684,10 +762,12 @@ Table notifications {
   user_id int
 
   title varchar
-
   message text
 
   notification_type varchar
+
+  reference_type varchar
+  reference_id int
 
   is_read boolean
 
@@ -695,7 +775,23 @@ Table notifications {
 }
 
 //////////////////////////////////////////////////////
-// VIDEO MEETINGS
+// NOTIFICATION DELIVERY LOGS
+//////////////////////////////////////////////////////
+
+Table notification_logs {
+  log_id int [pk]
+
+  notification_id int
+
+  delivery_channel varchar
+
+  delivery_status varchar
+
+  delivered_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// VIDEO / VIRTUAL MEETINGS
 //////////////////////////////////////////////////////
 
 Table meetings {
@@ -706,7 +802,6 @@ Table meetings {
   created_by int
 
   title varchar
-
   description text
 
   meeting_link text
@@ -714,6 +809,8 @@ Table meetings {
   meeting_date timestamp
 
   status varchar
+
+  created_at timestamp
 }
 
 //////////////////////////////////////////////////////
@@ -724,10 +821,45 @@ Table meeting_participants {
   meeting_participant_id int [pk]
 
   meeting_id int
-
   user_id int
 
   joined_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// PARENT COMMUNICATION LOGS
+//////////////////////////////////////////////////////
+
+Table parent_communications {
+  communication_id int [pk]
+
+  student_id int
+  parent_id int
+
+  initiated_by int
+
+  communication_type varchar
+
+  subject varchar
+  notes text
+
+  communication_date timestamp
+}
+
+//////////////////////////////////////////////////////
+// COMMUNICATION PREFERENCES
+//////////////////////////////////////////////////////
+
+Table communication_preferences {
+  preference_id int [pk]
+
+  user_id int
+
+  receive_email boolean
+  receive_sms boolean
+  receive_push boolean
+
+  updated_at timestamp
 }
 
 //////////////////////////////////////////////////////
@@ -751,15 +883,23 @@ Ref: announcements.created_by > users.user_id
 
 Ref: notifications.user_id > users.user_id
 
+Ref: notification_logs.notification_id > notifications.notification_id
+
 Ref: meetings.school_id > schools.school_id
 Ref: meetings.created_by > users.user_id
 
 Ref: meeting_participants.meeting_id > meetings.meeting_id
 Ref: meeting_participants.user_id > users.user_id
 
+Ref: parent_communications.student_id > students.student_id
+Ref: parent_communications.parent_id > parents.parent_id
+Ref: parent_communications.initiated_by > users.user_id
+
+Ref: communication_preferences.user_id > users.user_id
+
 //////////////////////////////////////////////////////
 // EDUNEXUS LAYER 4
-// FINANCE MANAGEMENT SYSTEM
+// FINANCE, BILLING & REVENUE MANAGEMENT SYSTEM
 //////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////
@@ -772,8 +912,9 @@ Table fee_categories {
   school_id int
 
   category_name varchar
-
   description text
+
+  is_optional boolean
 
   created_at timestamp
 }
@@ -787,13 +928,11 @@ Table fee_structures {
 
   school_id int
 
+  academic_year_id int
+  term_id int
   class_id int
 
   fee_category_id int
-
-  academic_year_id int
-
-  term_id int
 
   amount decimal
 
@@ -810,14 +949,16 @@ Table student_invoices {
   student_id int
 
   academic_year_id int
-
   term_id int
 
   invoice_number varchar
 
   total_amount decimal
+  balance_amount decimal
 
   invoice_status varchar
+
+  due_date date
 
   created_at timestamp
 }
@@ -833,7 +974,29 @@ Table invoice_items {
 
   fee_category_id int
 
+  description varchar
+
   amount decimal
+}
+
+//////////////////////////////////////////////////////
+// PAYMENT METHODS
+//////////////////////////////////////////////////////
+
+Table payment_methods {
+  payment_method_id int [pk]
+
+  school_id int
+
+  method_name varchar
+
+  provider_name varchar
+
+  account_reference varchar
+
+  is_active boolean
+
+  created_at timestamp
 }
 
 //////////////////////////////////////////////////////
@@ -844,16 +1007,17 @@ Table payments {
   payment_id int [pk]
 
   student_id int
-
   invoice_id int
 
-  amount decimal
+  payment_method_id int
 
-  payment_method varchar
+  amount decimal
 
   transaction_reference varchar
 
   payment_date timestamp
+
+  payment_status varchar
 
   recorded_by int
 }
@@ -886,6 +1050,8 @@ Table scholarships {
   sponsor varchar
 
   description text
+
+  created_at timestamp
 }
 
 //////////////////////////////////////////////////////
@@ -902,7 +1068,6 @@ Table student_scholarships {
   amount decimal
 
   start_date date
-
   end_date date
 }
 
@@ -925,16 +1090,133 @@ Table fee_waivers {
 }
 
 //////////////////////////////////////////////////////
+// PAYMENT PLANS
+//////////////////////////////////////////////////////
+
+Table payment_plans {
+  plan_id int [pk]
+
+  student_id int
+
+  total_amount decimal
+
+  installment_count int
+
+  start_date date
+  end_date date
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// PAYMENT PLAN INSTALLMENTS
+//////////////////////////////////////////////////////
+
+Table payment_plan_installments {
+  installment_id int [pk]
+
+  plan_id int
+
+  installment_number int
+
+  amount decimal
+
+  due_date date
+
+  payment_status varchar
+}
+
+//////////////////////////////////////////////////////
+// REFUNDS
+//////////////////////////////////////////////////////
+
+Table refunds {
+  refund_id int [pk]
+
+  student_id int
+
+  payment_id int
+
+  amount decimal
+
+  reason text
+
+  approved_by int
+
+  approved_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// FINANCIAL ACCOUNTS
+//////////////////////////////////////////////////////
+
+Table financial_accounts {
+  account_id int [pk]
+
+  school_id int
+
+  account_name varchar
+
+  account_type varchar
+
+  opening_balance decimal
+
+  current_balance decimal
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// FINANCIAL TRANSACTIONS
+//////////////////////////////////////////////////////
+
+Table financial_transactions {
+  transaction_id int [pk]
+
+  account_id int
+
+  transaction_type varchar
+
+  reference_type varchar
+  reference_id int
+
+  amount decimal
+
+  transaction_date timestamp
+
+  description text
+}
+
+//////////////////////////////////////////////////////
+// FINANCIAL REPORTS
+//////////////////////////////////////////////////////
+
+Table financial_reports {
+  report_id int [pk]
+
+  school_id int
+
+  report_type varchar
+
+  report_period_start date
+  report_period_end date
+
+  generated_at timestamp
+
+  generated_by int
+}
+
+//////////////////////////////////////////////////////
 // RELATIONSHIPS
 //////////////////////////////////////////////////////
 
 Ref: fee_categories.school_id > schools.school_id
 
 Ref: fee_structures.school_id > schools.school_id
-Ref: fee_structures.class_id > classes.class_id
-Ref: fee_structures.fee_category_id > fee_categories.fee_category_id
 Ref: fee_structures.academic_year_id > academic_years.academic_year_id
 Ref: fee_structures.term_id > terms.term_id
+Ref: fee_structures.class_id > classes.class_id
+Ref: fee_structures.fee_category_id > fee_categories.fee_category_id
 
 Ref: student_invoices.student_id > students.student_id
 Ref: student_invoices.academic_year_id > academic_years.academic_year_id
@@ -943,8 +1225,11 @@ Ref: student_invoices.term_id > terms.term_id
 Ref: invoice_items.invoice_id > student_invoices.invoice_id
 Ref: invoice_items.fee_category_id > fee_categories.fee_category_id
 
+Ref: payment_methods.school_id > schools.school_id
+
 Ref: payments.student_id > students.student_id
 Ref: payments.invoice_id > student_invoices.invoice_id
+Ref: payments.payment_method_id > payment_methods.payment_method_id
 Ref: payments.recorded_by > users.user_id
 
 Ref: receipts.payment_id > payments.payment_id
@@ -957,139 +1242,106 @@ Ref: student_scholarships.scholarship_id > scholarships.scholarship_id
 Ref: fee_waivers.student_id > students.student_id
 Ref: fee_waivers.approved_by > users.user_id
 
+Ref: payment_plans.student_id > students.student_id
+
+Ref: payment_plan_installments.plan_id > payment_plans.plan_id
+
+Ref: refunds.student_id > students.student_id
+Ref: refunds.payment_id > payments.payment_id
+Ref: refunds.approved_by > users.user_id
+
+Ref: financial_accounts.school_id > schools.school_id
+
+Ref: financial_transactions.account_id > financial_accounts.account_id
+
+Ref: financial_reports.school_id > schools.school_id
+Ref: financial_reports.generated_by > users.user_id
+
+
+
 //////////////////////////////////////////////////////
 // EDUNEXUS LAYER 5
-// LIBRARY & BOOK STORE MANAGEMENT
+// KNOWLEDGE & BOOK MANAGEMENT
 //////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////
-// BOOK CATEGORIES
+// LIBRARY MANAGEMENT
 //////////////////////////////////////////////////////
 
-Table book_categories {
+Table library_categories {
   category_id int [pk]
 
   school_id int
 
   category_name varchar
-
   description text
 }
 
-//////////////////////////////////////////////////////
-// LIBRARY BOOKS
-//////////////////////////////////////////////////////
-
-Table books {
+Table library_books {
   book_id int [pk]
 
   school_id int
-
   category_id int
 
   isbn varchar
 
   title varchar
-
   author varchar
-
   publisher varchar
 
   publication_year int
 
-  edition varchar
-
   description text
 
   total_copies int
-
   available_copies int
 
   created_at timestamp
 }
 
-//////////////////////////////////////////////////////
-// PHYSICAL BOOK COPIES
-//////////////////////////////////////////////////////
-
-Table book_copies {
+Table library_book_copies {
   copy_id int [pk]
 
   book_id int
 
   accession_number varchar
-
   barcode varchar
 
   status varchar
 }
 
-//////////////////////////////////////////////////////
-// LIBRARY LOANS
-//////////////////////////////////////////////////////
-
-Table book_loans {
+Table library_loans {
   loan_id int [pk]
 
   copy_id int
 
-  student_id int
-
-  issued_by int
+  borrower_user_id int
 
   issue_date date
-
   due_date date
-
   return_date date
 
   status varchar
+
+  issued_by int
 }
 
-//////////////////////////////////////////////////////
-// BOOK CONDITION CHECKS
-//////////////////////////////////////////////////////
-
-Table book_condition_checks {
-  check_id int [pk]
-
-  loan_id int
-
-  checked_by int
-
-  condition_status varchar
-
-  notes text
-
-  checked_at timestamp
-}
-
-//////////////////////////////////////////////////////
-// BOOK RESERVATIONS
-//////////////////////////////////////////////////////
-
-Table book_reservations {
+Table library_reservations {
   reservation_id int [pk]
 
   book_id int
 
-  student_id int
+  user_id int
 
   reservation_date timestamp
 
   status varchar
 }
 
-//////////////////////////////////////////////////////
-// LIBRARY FINES
-//////////////////////////////////////////////////////
-
 Table library_fines {
   fine_id int [pk]
 
   loan_id int
-
-  student_id int
 
   amount decimal
 
@@ -1101,7 +1353,156 @@ Table library_fines {
 }
 
 //////////////////////////////////////////////////////
-// DIGITAL LIBRARY
+// CURRICULUM BOOK STORE (TEXTBOOK BANK)
+//////////////////////////////////////////////////////
+
+Table textbook_categories {
+  category_id int [pk]
+
+  school_id int
+
+  category_name varchar
+  description text
+}
+
+Table textbooks {
+  textbook_id int [pk]
+
+  school_id int
+
+  subject_id int
+
+  isbn varchar
+
+  title varchar
+  publisher varchar
+  edition varchar
+
+  total_quantity int
+  available_quantity int
+
+  created_at timestamp
+}
+
+Table textbook_copies {
+  copy_id int [pk]
+
+  textbook_id int
+
+  barcode varchar
+  accession_number varchar
+
+  status varchar
+}
+
+Table textbook_issues {
+  issue_id int [pk]
+
+  copy_id int
+
+  student_id int
+
+  issued_by int
+
+  issue_date date
+
+  expected_return_date date
+
+  status varchar
+}
+
+Table textbook_returns {
+  return_id int [pk]
+
+  issue_id int
+
+  returned_by int
+
+  return_date date
+
+  condition_status varchar
+
+  remarks text
+
+  syllabus_completion_id int
+}
+
+Table textbook_replacements {
+  replacement_id int [pk]
+
+  issue_id int
+
+  student_id int
+
+  replacement_method varchar
+
+  replacement_notes text
+
+  approved_by int
+
+  replacement_date timestamp
+}
+
+//////////////////////////////////////////////////////
+// BOOK SALES SHOP (OPTIONAL)
+//////////////////////////////////////////////////////
+
+Table shop_items {
+  item_id int [pk]
+
+  school_id int
+
+  item_name varchar
+
+  item_type varchar
+
+  quantity_in_stock int
+
+  selling_price decimal
+
+  created_at timestamp
+}
+
+Table shop_sales {
+  sale_id int [pk]
+
+  school_id int
+
+  sold_to_student_id int
+
+  sold_by int
+
+  total_amount decimal
+
+  sale_date timestamp
+}
+
+Table shop_sale_items {
+  sale_item_id int [pk]
+
+  sale_id int
+
+  item_id int
+
+  quantity int
+
+  unit_price decimal
+
+  total_price decimal
+}
+
+Table shop_receipts {
+  receipt_id int [pk]
+
+  sale_id int
+
+  receipt_number varchar
+
+  issued_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// DIGITAL KNOWLEDGE RESOURCES
 //////////////////////////////////////////////////////
 
 Table digital_resources {
@@ -1123,111 +1524,57 @@ Table digital_resources {
 }
 
 //////////////////////////////////////////////////////
-// BOOK STORE ITEMS
-//////////////////////////////////////////////////////
-
-Table book_store_items {
-  store_item_id int [pk]
-
-  school_id int
-
-  subject_id int
-
-  isbn varchar
-
-  title varchar
-
-  publisher varchar
-
-  edition varchar
-
-  total_quantity int
-
-  available_quantity int
-
-  created_at timestamp
-}
-
-//////////////////////////////////////////////////////
-// BOOK STORE ISSUES
-//////////////////////////////////////////////////////
-
-Table book_store_issues {
-  issue_id int [pk]
-
-  store_item_id int
-
-  student_id int
-
-  issued_by int
-
-  issue_date date
-
-  expected_return_date date
-
-  actual_return_date date
-
-  status varchar
-}
-
-//////////////////////////////////////////////////////
-// LOST / REPLACEMENT TRACKING
-//////////////////////////////////////////////////////
-
-Table book_replacements {
-  replacement_id int [pk]
-
-  issue_id int
-
-  student_id int
-
-  replacement_method varchar
-
-  replacement_notes text
-
-  approved_by int
-
-  replacement_date timestamp
-}
-
-//////////////////////////////////////////////////////
 // RELATIONSHIPS
 //////////////////////////////////////////////////////
 
-Ref: book_categories.school_id > schools.school_id
+Ref: library_categories.school_id > schools.school_id
 
-Ref: books.school_id > schools.school_id
-Ref: books.category_id > book_categories.category_id
+Ref: library_books.school_id > schools.school_id
+Ref: library_books.category_id > library_categories.category_id
 
-Ref: book_copies.book_id > books.book_id
+Ref: library_book_copies.book_id > library_books.book_id
 
-Ref: book_loans.copy_id > book_copies.copy_id
-Ref: book_loans.student_id > students.student_id
-Ref: book_loans.issued_by > users.user_id
+Ref: library_loans.copy_id > library_book_copies.copy_id
+Ref: library_loans.borrower_user_id > users.user_id
+Ref: library_loans.issued_by > users.user_id
 
-Ref: book_condition_checks.loan_id > book_loans.loan_id
-Ref: book_condition_checks.checked_by > users.user_id
+Ref: library_reservations.book_id > library_books.book_id
+Ref: library_reservations.user_id > users.user_id
 
-Ref: book_reservations.book_id > books.book_id
-Ref: book_reservations.student_id > students.student_id
+Ref: library_fines.loan_id > library_loans.loan_id
 
-Ref: library_fines.loan_id > book_loans.loan_id
-Ref: library_fines.student_id > students.student_id
+Ref: textbook_categories.school_id > schools.school_id
+
+Ref: textbooks.school_id > schools.school_id
+Ref: textbooks.subject_id > subjects.subject_id
+
+Ref: textbook_copies.textbook_id > textbooks.textbook_id
+
+Ref: textbook_issues.copy_id > textbook_copies.copy_id
+Ref: textbook_issues.student_id > students.student_id
+Ref: textbook_issues.issued_by > users.user_id
+
+Ref: textbook_returns.issue_id > textbook_issues.issue_id
+Ref: textbook_returns.returned_by > users.user_id
+Ref: textbook_returns.syllabus_completion_id > syllabus_completion.completion_id
+
+Ref: textbook_replacements.issue_id > textbook_issues.issue_id
+Ref: textbook_replacements.student_id > students.student_id
+Ref: textbook_replacements.approved_by > users.user_id
+
+Ref: shop_items.school_id > schools.school_id
+
+Ref: shop_sales.school_id > schools.school_id
+Ref: shop_sales.sold_to_student_id > students.student_id
+Ref: shop_sales.sold_by > users.user_id
+
+Ref: shop_sale_items.sale_id > shop_sales.sale_id
+Ref: shop_sale_items.item_id > shop_items.item_id
+
+Ref: shop_receipts.sale_id > shop_sales.sale_id
 
 Ref: digital_resources.school_id > schools.school_id
 Ref: digital_resources.uploaded_by > users.user_id
-
-Ref: book_store_items.school_id > schools.school_id
-Ref: book_store_items.subject_id > subjects.subject_id
-
-Ref: book_store_issues.store_item_id > book_store_items.store_item_id
-Ref: book_store_issues.student_id > students.student_id
-Ref: book_store_issues.issued_by > users.user_id
-
-Ref: book_replacements.issue_id > book_store_issues.issue_id
-Ref: book_replacements.student_id > students.student_id
-Ref: book_replacements.approved_by > users.user_id
-
 //////////////////////////////////////////////////////
 // EDUNEXUS LAYER 6
 // HOSTEL & BOARDING MANAGEMENT
@@ -2774,3 +3121,231 @@ Ref: layout_components.component_id > ui_components.component_id
 
 Ref: ai_user_events.user_id > users.user_id
 Ref: ai_next_actions.user_id > users.user_id
+
+//////////////////////////////////////////////////////
+// EDUNEXUS LAYER 11
+// WORKFLOW, AUTOMATION & ORCHESTRATION ENGINE
+//////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+// WORKFLOW DEFINITIONS
+//////////////////////////////////////////////////////
+
+Table workflows {
+workflow_id int [pk]
+
+school_id int
+
+workflow_name varchar
+
+workflow_type varchar
+
+description text
+
+is_active boolean
+
+created_by int
+
+created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// WORKFLOW STEPS
+//////////////////////////////////////////////////////
+
+Table workflow_steps {
+step_id int [pk]
+
+workflow_id int
+
+step_order int
+
+step_name varchar
+
+assigned_role varchar
+
+action_type varchar
+
+configuration json
+}
+
+//////////////////////////////////////////////////////
+// WORKFLOW INSTANCES
+//////////////////////////////////////////////////////
+
+Table workflow_instances {
+instance_id int [pk]
+
+workflow_id int
+
+entity_type varchar
+
+entity_id int
+
+status varchar
+
+started_at timestamp
+
+completed_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// WORKFLOW TASKS
+//////////////////////////////////////////////////////
+
+Table workflow_tasks {
+task_id int [pk]
+
+instance_id int
+
+step_id int
+
+assigned_user int
+
+status varchar
+
+due_date timestamp
+
+completed_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// APPROVAL CHAINS
+//////////////////////////////////////////////////////
+
+Table approvals {
+approval_id int [pk]
+
+workflow_task_id int
+
+approved_by int
+
+approval_status varchar
+
+comments text
+
+approved_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// SYSTEM AUTOMATIONS
+//////////////////////////////////////////////////////
+
+Table automations {
+automation_id int [pk]
+
+school_id int
+
+automation_name varchar
+
+trigger_event varchar
+
+action_name varchar
+
+configuration json
+
+is_enabled boolean
+
+created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// AUTOMATION EXECUTION LOGS
+//////////////////////////////////////////////////////
+
+Table automation_logs {
+log_id int [pk]
+
+automation_id int
+
+execution_status varchar
+
+execution_result text
+
+executed_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// SYSTEM WEBHOOKS
+//////////////////////////////////////////////////////
+
+Table webhooks {
+webhook_id int [pk]
+
+school_id int
+
+webhook_name varchar
+
+endpoint_url text
+
+secret_key varchar
+
+is_active boolean
+
+created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// WEBHOOK EVENTS
+//////////////////////////////////////////////////////
+
+Table webhook_events {
+event_id int [pk]
+
+webhook_id int
+
+event_name varchar
+
+payload json
+
+delivery_status varchar
+
+delivered_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// SYSTEM JOB QUEUE
+//////////////////////////////////////////////////////
+
+Table job_queue {
+job_id int [pk]
+
+job_type varchar
+
+payload json
+
+status varchar
+
+priority int
+
+created_at timestamp
+
+processed_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// RELATIONSHIPS
+//////////////////////////////////////////////////////
+
+Ref: workflows.school_id > schools.school_id
+Ref: workflows.created_by > users.user_id
+
+Ref: workflow_steps.workflow_id > workflows.workflow_id
+
+Ref: workflow_instances.workflow_id > workflows.workflow_id
+
+Ref: workflow_tasks.instance_id > workflow_instances.instance_id
+Ref: workflow_tasks.step_id > workflow_steps.step_id
+Ref: workflow_tasks.assigned_user > users.user_id
+
+Ref: approvals.workflow_task_id > workflow_tasks.task_id
+Ref: approvals.approved_by > users.user_id
+
+Ref: automations.school_id > schools.school_id
+
+Ref: automation_logs.automation_id > automations.automation_id
+
+Ref: webhooks.school_id > schools.school_id
+
+Ref: webhook_events.webhook_id > webhooks.webhook_id
+
