@@ -62,7 +62,7 @@ Ref: user_roles.role_id > roles.role_id
 Ref: role_permissions.role_id > roles.role_id
 Ref: role_permissions.permission_id > permissions.permission_id
 
-
+## Layer 2: Student Information System
 
 Table students {
   student_id int [pk]
