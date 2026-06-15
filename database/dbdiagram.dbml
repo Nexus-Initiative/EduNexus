@@ -1,3 +1,4 @@
+Layer 1: Core Foundation
 Table schools {
   school_id int [pk]
   school_name varchar
@@ -104,3 +105,42 @@ Ref: staff.user_id > users.user_id
 
 Ref: student_parents.student_id > students.student_id
 Ref: student_parents.parent_id > parents.parent_id
+
+## Layer 3: Academic Module
+Table departments {
+  department_id int [pk]
+  department_name varchar
+  description text
+}
+
+Table classes {
+  class_id int [pk]
+  class_name varchar
+  stream varchar
+  academic_year int
+  class_teacher_id int
+}
+
+Table subjects {
+  subject_id int [pk]
+  subject_name varchar
+  subject_code varchar
+  department_id int
+}
+
+Table teacher_subjects {
+  teacher_subject_id int [pk]
+  staff_id int
+  subject_id int
+}
+
+Ref: staff.department_id > departments.department_id
+
+Ref: subjects.department_id > departments.department_id
+
+Ref: students.current_class_id > classes.class_id
+
+Ref: classes.class_teacher_id > staff.staff_id
+
+Ref: teacher_subjects.staff_id > staff.staff_id
+Ref: teacher_subjects.subject_id > subjects.subject_id
