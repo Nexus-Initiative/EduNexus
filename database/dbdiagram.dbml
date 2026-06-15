@@ -1,0 +1,106 @@
+Table schools {
+  school_id int [pk]
+  school_name varchar
+  school_type varchar
+  school_motto varchar
+  school_email varchar
+  school_phone varchar
+  school_address text
+  county varchar
+  country varchar
+  website varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table users {
+  user_id int [pk]
+  school_id int
+  first_name varchar
+  middle_name varchar
+  last_name varchar
+  email varchar
+  phone varchar
+  password_hash varchar
+  gender varchar
+  date_of_birth date
+  profile_photo text
+  status varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table roles {
+  role_id int [pk]
+  role_name varchar
+  role_description text
+}
+
+Table permissions {
+  permission_id int [pk]
+  permission_name varchar
+  description text
+}
+
+Table user_roles {
+  user_role_id int [pk]
+  user_id int
+  role_id int
+}
+
+Table role_permissions {
+  role_permission_id int [pk]
+  role_id int
+  permission_id int
+}
+
+Ref: users.school_id > schools.school_id
+
+Ref: user_roles.user_id > users.user_id
+Ref: user_roles.role_id > roles.role_id
+
+Ref: role_permissions.role_id > roles.role_id
+Ref: role_permissions.permission_id > permissions.permission_id
+
+
+
+Table students {
+  student_id int [pk]
+  user_id int
+  admission_number varchar
+  current_class_id int
+  admission_date date
+  expected_graduation_year int
+  status varchar
+}
+
+Table parents {
+  parent_id int [pk]
+  user_id int
+  occupation varchar
+  employer varchar
+  relationship_type varchar
+}
+
+Table student_parents {
+  student_parent_id int [pk]
+  student_id int
+  parent_id int
+}
+
+Table staff {
+  staff_id int [pk]
+  user_id int
+  employee_number varchar
+  employment_date date
+  department_id int
+  qualification varchar
+  specialization varchar
+}
+
+Ref: students.user_id > users.user_id
+Ref: parents.user_id > users.user_id
+Ref: staff.user_id > users.user_id
+
+Ref: student_parents.student_id > students.student_id
+Ref: student_parents.parent_id > parents.parent_id
