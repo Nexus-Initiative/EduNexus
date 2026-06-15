@@ -470,3 +470,411 @@ Version: 1.0
 Project: EduNexus
 License: Proprietary (All Rights Reserved)
 
+# DATABASE_SCHEMA.md
+
+# EduNexus Database Schema
+
+## Overview
+
+EduNexus is a multi-school education operating system designed to manage the complete lifecycle of a learner, educator, parent, and institution.
+
+The database architecture is organized into eleven interconnected layers, each responsible for a specific domain of the platform.
+
+The schema is implemented using DBML and can be exported to PostgreSQL, MySQL, SQL Server, and other relational database systems.
+
+---
+
+# Database Design Principles
+
+The EduNexus database follows the following principles:
+
+1. Multi-Tenant Architecture
+2. Third Normal Form (3NF)
+3. Role-Based Access Control (RBAC)
+4. Auditability & Traceability
+5. Modular Feature Activation
+6. School-Type Flexibility
+7. AI-Ready Data Structures
+8. Scalable Cloud Architecture
+9. Security by Design
+10. API-First Development
+
+---
+
+# Layer 1 — Core Foundation
+
+Purpose:
+
+Provides the identity and access foundation of the platform.
+
+Core Tables:
+
+* schools
+* users
+* roles
+* permissions
+* user_roles
+* role_permissions
+
+Responsibilities:
+
+* School registration
+* User management
+* Authentication
+* Authorization
+* Role assignment
+
+---
+
+# Layer 2 — Academic Management System
+
+Purpose:
+
+Manages academic operations.
+
+Core Tables:
+
+* academic_years
+* terms
+* academic_events
+* departments
+* staff
+* classes
+* students
+* parents
+* subjects
+* teacher_subjects
+* assignments
+* exams
+* results
+* timetables
+* timetable_entries
+* learning_resources
+* student_documents
+
+Responsibilities:
+
+* Academic calendar
+* Student records
+* Subject management
+* Timetable generation
+* Examination management
+* Performance tracking
+
+---
+
+# Layer 3 — Communication & Collaboration
+
+Purpose:
+
+Provides communication between stakeholders.
+
+Core Tables:
+
+* conversations
+* conversation_participants
+* messages
+* message_reads
+* announcements
+* notifications
+* meetings
+* meeting_participants
+
+Responsibilities:
+
+* Messaging
+* School announcements
+* Parent communication
+* Virtual meetings
+* Notification delivery
+
+---
+
+# Layer 4 — Finance Management
+
+Purpose:
+
+Manages financial transactions.
+
+Core Tables:
+
+* fee_categories
+* fee_structures
+* student_invoices
+* invoice_items
+* payments
+* receipts
+* scholarships
+* student_scholarships
+* fee_waivers
+
+Responsibilities:
+
+* Fee management
+* Payment tracking
+* Scholarships
+* Waivers
+* Financial reporting
+
+---
+
+# Layer 5 — Knowledge Resource Management
+
+Purpose:
+
+Manages all school learning resources.
+
+Subsystems:
+
+## Library
+
+Reference books and reading resources.
+
+Tables:
+
+* books
+* book_copies
+* book_loans
+* book_reservations
+* library_fines
+
+## Book Bank
+
+Curriculum textbooks distributed to students.
+
+Tables:
+
+* book_store_items
+* book_store_issues
+* syllabus_completion
+* book_replacements
+
+## Book Sales Store
+
+Optional school-operated textbook sales.
+
+Tables:
+
+* book_sales_inventory
+* book_sales_transactions
+
+## Digital Resources
+
+Tables:
+
+* digital_resources
+* media_files
+
+Responsibilities:
+
+* Lending
+* Returning
+* Inventory control
+* Textbook lifecycle tracking
+* Digital content management
+
+---
+
+# Layer 6 — Boarding & Student Welfare
+
+Purpose:
+
+Supports boarding schools.
+
+Core Tables:
+
+* hostels
+* rooms
+* beds
+* boarding_students
+* bed_assignments
+* leave_out_requests
+* hostel_roll_calls
+* hostel_visitors
+* hostel_inspections
+
+Responsibilities:
+
+* Bed allocation
+* Roll call management
+* Leave requests
+* Hostel discipline
+* Boarding operations
+
+---
+
+# Layer 7 — Clubs, Sports & Student Life
+
+Purpose:
+
+Manages extracurricular activities.
+
+Core Tables:
+
+* houses
+* clubs
+* club_memberships
+* sports_teams
+* sports_team_members
+* events
+* competitions
+* achievements
+* certificates
+
+Responsibilities:
+
+* Clubs
+* Sports
+* Competitions
+* Student leadership
+* Awards and recognition
+
+---
+
+# Layer 8 — Opportunet Platform
+
+Purpose:
+
+Connects learners to opportunities.
+
+Core Tables:
+
+* opportunity_providers
+* opportunities
+* opportunity_tags
+* applications
+* mentors
+* recommendation_requests
+* student_profiles
+* opportunity_matches
+
+Responsibilities:
+
+* Scholarships
+* Internships
+* Competitions
+* Mentorship
+* University opportunities
+
+---
+
+# Layer 9 — AI & Analytics Engine
+
+Purpose:
+
+Provides intelligence and predictive insights.
+
+Core Tables:
+
+* student_ai_profiles
+* learning_insights
+* risk_predictions
+* opportunity_recommendations
+* learning_paths
+* ai_summaries
+* ai_chart_datasets
+* behavior_patterns
+
+Responsibilities:
+
+* Student analytics
+* Performance prediction
+* Dropout prediction
+* Opportunity matching
+* AI reporting
+
+---
+
+# Layer 10 — Governance, Security & Platform Control
+
+Purpose:
+
+Provides enterprise-grade governance.
+
+Core Tables:
+
+* school_features
+* policies
+* policy_statements
+* user_policies
+* role_policies
+* audit_logs
+* user_sessions
+* suspicious_activity_logs
+* ui_layouts
+* ui_components
+* ai_next_actions
+
+Responsibilities:
+
+* IAM permissions
+* Security monitoring
+* Audit trails
+* Dynamic UI generation
+* Feature management
+* AI personalization
+
+---
+
+# Layer 11 — Integration & Infrastructure Layer
+
+Purpose:
+
+Connects EduNexus with external systems.
+
+Core Tables:
+
+* api_integrations
+* external_data_sync
+
+Optional Modules:
+
+* Transport Management
+* Meal Services
+* Inventory Management
+* Future Healthcare Module
+
+Responsibilities:
+
+* API connectivity
+* Data synchronization
+* Third-party integrations
+* Future expansion support
+
+---
+
+# Relationship Strategy
+
+The database follows a hub-and-spoke model.
+
+Primary hub tables:
+
+* schools
+* users
+* students
+* staff
+* classes
+
+Most modules connect through these entities to maintain consistency across the platform.
+
+---
+
+# Source of Truth
+
+The official database definition is maintained in:
+
+database/edunexus.dbml
+
+Generated SQL schemas must always be produced from the DBML file to ensure consistency across environments.
+
+---
+
+Version: 2.0
+
+Project: EduNexus
+
+Architecture: Multi-School Education Operating System
+
+Database Model: Relational (DBML)
+
+Status: Active Development
