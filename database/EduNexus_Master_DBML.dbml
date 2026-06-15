@@ -1,0 +1,203 @@
+// EduNexus Master DBML (Version 1)
+// Multi-school architecture
+
+Table schools {
+  school_id int [pk]
+  school_name varchar
+  school_level varchar
+  school_category varchar
+  boarding_type varchar
+  ownership_type varchar
+  student_capacity int
+  county varchar
+  country varchar
+}
+
+Table school_settings {
+  setting_id int [pk]
+  school_id int
+  setting_key varchar
+  setting_value text
+}
+
+Table users {
+  user_id int [pk]
+  school_id int
+  first_name varchar
+  last_name varchar
+  email varchar
+}
+
+Table roles { role_id int [pk] role_name varchar }
+Table permissions { permission_id int [pk] permission_name varchar }
+Table user_roles { user_role_id int [pk] user_id int role_id int }
+Table role_permissions { role_permission_id int [pk] role_id int permission_id int }
+
+Table academic_years { academic_year_id int [pk] school_id int year_name varchar }
+Table terms { term_id int [pk] academic_year_id int term_name varchar }
+
+Table departments { department_id int [pk] school_id int department_name varchar }
+Table staff { staff_id int [pk] user_id int department_id int }
+Table classes { class_id int [pk] school_id int class_name varchar class_teacher_id int }
+Table subjects { subject_id int [pk] school_id int department_id int subject_name varchar }
+Table teacher_subjects { teacher_subject_id int [pk] staff_id int subject_id int }
+
+Table students {
+  student_id int [pk]
+  user_id int
+  school_id int
+  current_class_id int
+  student_type varchar
+}
+
+Table parents { parent_id int [pk] user_id int school_id int }
+Table student_parents { student_parent_id int [pk] student_id int parent_id int }
+
+Table student_classes {
+  student_class_id int [pk]
+  student_id int
+  class_id int
+  academic_year_id int
+  term_id int
+}
+
+Table attendance {
+  attendance_id int [pk]
+  student_id int
+  class_id int
+  recorded_by int
+}
+
+Table assignments {
+  assignment_id int [pk]
+  subject_id int
+  staff_id int
+  class_id int
+}
+
+Table student_assignments {
+  student_assignment_id int [pk]
+  assignment_id int
+  student_id int
+}
+
+Table exams {
+  exam_id int [pk]
+  class_id int
+  term_id int
+  exam_name varchar
+  is_past_paper boolean
+}
+
+Table results {
+  result_id int [pk]
+  exam_id int
+  student_id int
+  subject_id int
+}
+
+Table resources {
+  resource_id int [pk]
+  school_id int
+  uploaded_by int
+  resource_type varchar
+}
+
+Table conversations { conversation_id int [pk] conversation_type varchar }
+Table conversation_participants { participant_id int [pk] conversation_id int user_id int }
+Table messages { message_id int [pk] conversation_id int sender_id int }
+Table notifications { notification_id int [pk] user_id int }
+Table announcements { announcement_id int [pk] school_id int created_by int }
+
+Table books { book_id int [pk] school_id int title varchar }
+Table book_loans { loan_id int [pk] book_id int student_id int issued_by int }
+
+Table hostels { hostel_id int [pk] school_id int hostel_name varchar }
+Table rooms { room_id int [pk] hostel_id int }
+Table room_assignments { assignment_id int [pk] room_id int student_id int }
+
+Table fee_categories { fee_category_id int [pk] school_id int category_name varchar }
+Table fee_structures { fee_structure_id int [pk] class_id int fee_category_id int }
+Table payments { payment_id int [pk] student_id int }
+
+Table clubs { club_id int [pk] school_id int patron_id int }
+Table club_memberships { membership_id int [pk] club_id int student_id int }
+
+Table opportunities { opportunity_id int [pk] school_id int }
+Table applications { application_id int [pk] opportunity_id int student_id int }
+
+Table ai_interactions { interaction_id int [pk] user_id int }
+Table audit_logs { audit_log_id int [pk] user_id int }
+
+Table timetables { timetable_id int [pk] class_id int subject_id int staff_id int }
+
+Ref: school_settings.school_id > schools.school_id
+Ref: users.school_id > schools.school_id
+Ref: user_roles.user_id > users.user_id
+Ref: user_roles.role_id > roles.role_id
+Ref: role_permissions.role_id > roles.role_id
+Ref: role_permissions.permission_id > permissions.permission_id
+Ref: academic_years.school_id > schools.school_id
+Ref: terms.academic_year_id > academic_years.academic_year_id
+Ref: departments.school_id > schools.school_id
+Ref: staff.user_id > users.user_id
+Ref: staff.department_id > departments.department_id
+Ref: classes.school_id > schools.school_id
+Ref: classes.class_teacher_id > staff.staff_id
+Ref: subjects.school_id > schools.school_id
+Ref: subjects.department_id > departments.department_id
+Ref: teacher_subjects.staff_id > staff.staff_id
+Ref: teacher_subjects.subject_id > subjects.subject_id
+Ref: students.user_id > users.user_id
+Ref: students.school_id > schools.school_id
+Ref: students.current_class_id > classes.class_id
+Ref: parents.user_id > users.user_id
+Ref: parents.school_id > schools.school_id
+Ref: student_parents.student_id > students.student_id
+Ref: student_parents.parent_id > parents.parent_id
+Ref: student_classes.student_id > students.student_id
+Ref: student_classes.class_id > classes.class_id
+Ref: student_classes.academic_year_id > academic_years.academic_year_id
+Ref: student_classes.term_id > terms.term_id
+Ref: attendance.student_id > students.student_id
+Ref: attendance.class_id > classes.class_id
+Ref: attendance.recorded_by > staff.staff_id
+Ref: assignments.subject_id > subjects.subject_id
+Ref: assignments.staff_id > staff.staff_id
+Ref: assignments.class_id > classes.class_id
+Ref: student_assignments.assignment_id > assignments.assignment_id
+Ref: student_assignments.student_id > students.student_id
+Ref: exams.class_id > classes.class_id
+Ref: exams.term_id > terms.term_id
+Ref: results.exam_id > exams.exam_id
+Ref: results.student_id > students.student_id
+Ref: results.subject_id > subjects.subject_id
+Ref: resources.school_id > schools.school_id
+Ref: resources.uploaded_by > users.user_id
+Ref: conversation_participants.conversation_id > conversations.conversation_id
+Ref: conversation_participants.user_id > users.user_id
+Ref: messages.conversation_id > conversations.conversation_id
+Ref: messages.sender_id > users.user_id
+Ref: notifications.user_id > users.user_id
+Ref: announcements.school_id > schools.school_id
+Ref: announcements.created_by > users.user_id
+Ref: book_loans.book_id > books.book_id
+Ref: book_loans.student_id > students.student_id
+Ref: book_loans.issued_by > staff.staff_id
+Ref: rooms.hostel_id > hostels.hostel_id
+Ref: room_assignments.room_id > rooms.room_id
+Ref: room_assignments.student_id > students.student_id
+Ref: fee_categories.school_id > schools.school_id
+Ref: fee_structures.class_id > classes.class_id
+Ref: fee_structures.fee_category_id > fee_categories.fee_category_id
+Ref: payments.student_id > students.student_id
+Ref: clubs.patron_id > staff.staff_id
+Ref: club_memberships.club_id > clubs.club_id
+Ref: club_memberships.student_id > students.student_id
+Ref: applications.opportunity_id > opportunities.opportunity_id
+Ref: applications.student_id > students.student_id
+Ref: ai_interactions.user_id > users.user_id
+Ref: audit_logs.user_id > users.user_id
+Ref: timetables.class_id > classes.class_id
+Ref: timetables.subject_id > subjects.subject_id
+Ref: timetables.staff_id > staff.staff_id
