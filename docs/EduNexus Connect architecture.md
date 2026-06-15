@@ -1,4 +1,4 @@
-EduNexus Connect
+EduNexus Connect/ communication architecture
 
 │
 
