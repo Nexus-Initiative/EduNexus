@@ -444,6 +444,146 @@ Ref: resources.subject_id > subjects.subject_id
 Ref: resources.uploaded_by > users.user_id
 
 //////////////////////////////////////////////////////
+// EDUNEXUS CORE ACADEMIC EXTENSIONS
+//////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+// SCHOOL SETTINGS
+//////////////////////////////////////////////////////
+
+Table school_settings {
+setting_id int [pk]
+
+school_id int
+
+setting_key varchar
+setting_value text
+
+created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// ACADEMIC CALENDAR EVENTS
+//////////////////////////////////////////////////////
+
+Table academic_events {
+event_id int [pk]
+
+school_id int
+term_id int
+
+event_name varchar
+event_date date
+
+event_type varchar
+
+description text
+
+created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// STUDENT DOCUMENTS
+//////////////////////////////////////////////////////
+
+Table student_documents {
+document_id int [pk]
+
+student_id int
+
+document_name varchar
+document_type varchar
+
+file_url text
+
+uploaded_by int
+
+uploaded_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// TIMETABLES
+//////////////////////////////////////////////////////
+
+Table timetables {
+timetable_id int [pk]
+
+school_id int
+academic_year_id int
+term_id int
+class_id int
+
+created_by int
+
+created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// TIMETABLE ENTRIES
+//////////////////////////////////////////////////////
+
+Table timetable_entries {
+entry_id int [pk]
+
+timetable_id int
+
+subject_id int
+teacher_id int
+
+room_name varchar
+
+day_of_week varchar
+
+start_time time
+end_time time
+}
+
+//////////////////////////////////////////////////////
+// MEDIA FILES
+//////////////////////////////////////////////////////
+
+Table media_files {
+file_id int [pk]
+
+school_id int
+
+uploaded_by int
+
+file_name varchar
+file_type varchar
+
+file_url text
+
+created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// RELATIONSHIPS
+//////////////////////////////////////////////////////
+
+Ref: school_settings.school_id > schools.school_id
+
+Ref: academic_events.school_id > schools.school_id
+Ref: academic_events.term_id > terms.term_id
+
+Ref: student_documents.student_id > students.student_id
+Ref: student_documents.uploaded_by > users.user_id
+
+Ref: timetables.school_id > schools.school_id
+Ref: timetables.academic_year_id > academic_years.academic_year_id
+Ref: timetables.term_id > terms.term_id
+Ref: timetables.class_id > classes.class_id
+Ref: timetables.created_by > users.user_id
+
+Ref: timetable_entries.timetable_id > timetables.timetable_id
+Ref: timetable_entries.subject_id > subjects.subject_id
+Ref: timetable_entries.teacher_id > staff.staff_id
+
+Ref: media_files.school_id > schools.school_id
+Ref: media_files.uploaded_by > users.user_id
+
+
+//////////////////////////////////////////////////////
 // EDUNEXUS LAYER 3
 // COMMUNICATION SYSTEM
 //////////////////////////////////////////////////////
