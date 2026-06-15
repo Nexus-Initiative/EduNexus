@@ -1,0 +1,2946 @@
+//////////////////////////////////////////////////////
+// EDUNEXUS CORE FOUNDATION
+//////////////////////////////////////////////////////
+
+Table schools {
+  school_id int [pk]
+
+  school_name varchar
+  school_type varchar
+  school_category varchar
+
+  school_motto varchar
+
+  school_email varchar
+  school_phone varchar
+
+  school_address text
+
+  county varchar
+  country varchar
+
+  website varchar
+
+  created_at timestamp
+  updated_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// USERS
+//////////////////////////////////////////////////////
+
+Table users {
+  user_id int [pk]
+
+  school_id int
+
+  first_name varchar
+  middle_name varchar
+  last_name varchar
+
+  email varchar
+  phone varchar
+
+  password_hash varchar
+
+  gender varchar
+  date_of_birth date
+
+  profile_photo text
+
+  status varchar
+
+  created_at timestamp
+  updated_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// ROLES
+//////////////////////////////////////////////////////
+
+Table roles {
+  role_id int [pk]
+
+  role_name varchar
+  role_description text
+}
+
+//////////////////////////////////////////////////////
+// USER ROLES
+//////////////////////////////////////////////////////
+
+Table user_roles {
+  user_role_id int [pk]
+
+  user_id int
+  role_id int
+}
+
+//////////////////////////////////////////////////////
+// PERMISSIONS
+//////////////////////////////////////////////////////
+
+Table permissions {
+  permission_id int [pk]
+
+  permission_name varchar
+  description text
+}
+
+//////////////////////////////////////////////////////
+// ROLE PERMISSIONS
+//////////////////////////////////////////////////////
+
+Table role_permissions {
+  role_permission_id int [pk]
+
+  role_id int
+  permission_id int
+}
+
+//////////////////////////////////////////////////////
+// RELATIONSHIPS
+//////////////////////////////////////////////////////
+
+Ref: users.school_id > schools.school_id
+
+Ref: user_roles.user_id > users.user_id
+Ref: user_roles.role_id > roles.role_id
+
+Ref: role_permissions.role_id > roles.role_id
+Ref: role_permissions.permission_id > permissions.permission_id
+
+//////////////////////////////////////////////////////
+// EDUNEXUS LAYER 2
+// ACADEMIC SYSTEM
+//////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+// ACADEMIC YEARS
+//////////////////////////////////////////////////////
+
+Table academic_years {
+  academic_year_id int [pk]
+
+  school_id int
+
+  year_name varchar
+  start_date date
+  end_date date
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// TERMS
+//////////////////////////////////////////////////////
+
+Table terms {
+  term_id int [pk]
+
+  academic_year_id int
+
+  term_name varchar
+
+  start_date date
+  end_date date
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// DEPARTMENTS
+//////////////////////////////////////////////////////
+
+Table departments {
+  department_id int [pk]
+
+  school_id int
+
+  department_name varchar
+  description text
+}
+
+//////////////////////////////////////////////////////
+// STAFF
+//////////////////////////////////////////////////////
+
+Table staff {
+  staff_id int [pk]
+
+  user_id int
+
+  employee_number varchar
+
+  employment_date date
+
+  department_id int
+
+  qualification varchar
+  specialization varchar
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// CLASSES
+//////////////////////////////////////////////////////
+
+Table classes {
+  class_id int [pk]
+
+  school_id int
+
+  class_name varchar
+  stream varchar
+
+  academic_year_id int
+
+  class_teacher_id int
+}
+
+//////////////////////////////////////////////////////
+// STUDENTS
+//////////////////////////////////////////////////////
+
+Table students {
+  student_id int [pk]
+
+  user_id int
+
+  admission_number varchar
+
+  admission_date date
+
+  expected_graduation_year int
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// STUDENT CLASS HISTORY
+//////////////////////////////////////////////////////
+
+Table student_classes {
+  student_class_id int [pk]
+
+  student_id int
+
+  class_id int
+
+  academic_year_id int
+
+  start_date date
+  end_date date
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// PARENTS
+//////////////////////////////////////////////////////
+
+Table parents {
+  parent_id int [pk]
+
+  user_id int
+
+  occupation varchar
+  employer varchar
+
+  relationship_type varchar
+}
+
+//////////////////////////////////////////////////////
+// STUDENT PARENTS
+//////////////////////////////////////////////////////
+
+Table student_parents {
+  student_parent_id int [pk]
+
+  student_id int
+
+  parent_id int
+}
+
+//////////////////////////////////////////////////////
+// SUBJECTS
+//////////////////////////////////////////////////////
+
+Table subjects {
+  subject_id int [pk]
+
+  school_id int
+
+  subject_name varchar
+  subject_code varchar
+
+  department_id int
+}
+
+//////////////////////////////////////////////////////
+// TEACHER SUBJECTS
+//////////////////////////////////////////////////////
+
+Table teacher_subjects {
+  teacher_subject_id int [pk]
+
+  staff_id int
+
+  subject_id int
+}
+
+//////////////////////////////////////////////////////
+// ASSIGNMENTS
+//////////////////////////////////////////////////////
+
+Table assignments {
+  assignment_id int [pk]
+
+  subject_id int
+
+  staff_id int
+
+  class_id int
+
+  title varchar
+  description text
+
+  due_date date
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// STUDENT ASSIGNMENTS
+//////////////////////////////////////////////////////
+
+Table student_assignments {
+  student_assignment_id int [pk]
+
+  assignment_id int
+
+  student_id int
+
+  submission_date timestamp
+
+  score decimal
+
+  feedback text
+}
+
+//////////////////////////////////////////////////////
+// EXAMS
+//////////////////////////////////////////////////////
+
+Table exams {
+  exam_id int [pk]
+
+  school_id int
+
+  class_id int
+
+  term_id int
+
+  exam_name varchar
+
+  exam_type varchar
+
+  exam_date date
+
+  is_past_paper boolean
+}
+
+//////////////////////////////////////////////////////
+// RESULTS
+//////////////////////////////////////////////////////
+
+Table results {
+  result_id int [pk]
+
+  exam_id int
+
+  student_id int
+
+  subject_id int
+
+  marks decimal
+
+  grade varchar
+
+  remarks varchar
+}
+
+//////////////////////////////////////////////////////
+// LEARNING RESOURCES
+//////////////////////////////////////////////////////
+
+Table resources {
+  resource_id int [pk]
+
+  subject_id int
+
+  uploaded_by int
+
+  title varchar
+
+  resource_type varchar
+
+  file_url text
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// RELATIONSHIPS
+//////////////////////////////////////////////////////
+
+Ref: academic_years.school_id > schools.school_id
+
+Ref: terms.academic_year_id > academic_years.academic_year_id
+
+Ref: departments.school_id > schools.school_id
+
+Ref: staff.user_id > users.user_id
+Ref: staff.department_id > departments.department_id
+
+Ref: classes.school_id > schools.school_id
+Ref: classes.academic_year_id > academic_years.academic_year_id
+Ref: classes.class_teacher_id > staff.staff_id
+
+Ref: students.user_id > users.user_id
+
+Ref: student_classes.student_id > students.student_id
+Ref: student_classes.class_id > classes.class_id
+Ref: student_classes.academic_year_id > academic_years.academic_year_id
+
+Ref: parents.user_id > users.user_id
+
+Ref: student_parents.student_id > students.student_id
+Ref: student_parents.parent_id > parents.parent_id
+
+Ref: subjects.school_id > schools.school_id
+Ref: subjects.department_id > departments.department_id
+
+Ref: teacher_subjects.staff_id > staff.staff_id
+Ref: teacher_subjects.subject_id > subjects.subject_id
+
+Ref: assignments.subject_id > subjects.subject_id
+Ref: assignments.staff_id > staff.staff_id
+Ref: assignments.class_id > classes.class_id
+
+Ref: student_assignments.assignment_id > assignments.assignment_id
+Ref: student_assignments.student_id > students.student_id
+
+Ref: exams.school_id > schools.school_id
+Ref: exams.class_id > classes.class_id
+Ref: exams.term_id > terms.term_id
+
+Ref: results.exam_id > exams.exam_id
+Ref: results.student_id > students.student_id
+Ref: results.subject_id > subjects.subject_id
+
+Ref: resources.subject_id > subjects.subject_id
+Ref: resources.uploaded_by > users.user_id
+
+//////////////////////////////////////////////////////
+// EDUNEXUS LAYER 3
+// COMMUNICATION SYSTEM
+//////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+// CONVERSATIONS
+//////////////////////////////////////////////////////
+
+Table conversations {
+  conversation_id int [pk]
+
+  school_id int
+
+  conversation_name varchar
+
+  conversation_type varchar
+
+  created_by int
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// CONVERSATION PARTICIPANTS
+//////////////////////////////////////////////////////
+
+Table conversation_participants {
+  participant_id int [pk]
+
+  conversation_id int
+
+  user_id int
+
+  joined_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// MESSAGES
+//////////////////////////////////////////////////////
+
+Table messages {
+  message_id int [pk]
+
+  conversation_id int
+
+  sender_id int
+
+  message_content text
+
+  attachment_url text
+
+  message_type varchar
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// MESSAGE READS
+//////////////////////////////////////////////////////
+
+Table message_reads {
+  message_read_id int [pk]
+
+  message_id int
+
+  user_id int
+
+  read_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// ANNOUNCEMENTS
+//////////////////////////////////////////////////////
+
+Table announcements {
+  announcement_id int [pk]
+
+  school_id int
+
+  created_by int
+
+  title varchar
+
+  content text
+
+  target_audience varchar
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// NOTIFICATIONS
+//////////////////////////////////////////////////////
+
+Table notifications {
+  notification_id int [pk]
+
+  user_id int
+
+  title varchar
+
+  message text
+
+  notification_type varchar
+
+  is_read boolean
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// VIDEO MEETINGS
+//////////////////////////////////////////////////////
+
+Table meetings {
+  meeting_id int [pk]
+
+  school_id int
+
+  created_by int
+
+  title varchar
+
+  description text
+
+  meeting_link text
+
+  meeting_date timestamp
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// MEETING PARTICIPANTS
+//////////////////////////////////////////////////////
+
+Table meeting_participants {
+  meeting_participant_id int [pk]
+
+  meeting_id int
+
+  user_id int
+
+  joined_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// RELATIONSHIPS
+//////////////////////////////////////////////////////
+
+Ref: conversations.school_id > schools.school_id
+Ref: conversations.created_by > users.user_id
+
+Ref: conversation_participants.conversation_id > conversations.conversation_id
+Ref: conversation_participants.user_id > users.user_id
+
+Ref: messages.conversation_id > conversations.conversation_id
+Ref: messages.sender_id > users.user_id
+
+Ref: message_reads.message_id > messages.message_id
+Ref: message_reads.user_id > users.user_id
+
+Ref: announcements.school_id > schools.school_id
+Ref: announcements.created_by > users.user_id
+
+Ref: notifications.user_id > users.user_id
+
+Ref: meetings.school_id > schools.school_id
+Ref: meetings.created_by > users.user_id
+
+Ref: meeting_participants.meeting_id > meetings.meeting_id
+Ref: meeting_participants.user_id > users.user_id
+
+
+//////////////////////////////////////////////////////
+// EDUNEXUS LAYER 4
+// FINANCE MANAGEMENT SYSTEM
+//////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+// FEE CATEGORIES
+//////////////////////////////////////////////////////
+
+Table fee_categories {
+  fee_category_id int [pk]
+
+  school_id int
+
+  category_name varchar
+
+  description text
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// FEE STRUCTURES
+//////////////////////////////////////////////////////
+
+Table fee_structures {
+  fee_structure_id int [pk]
+
+  school_id int
+
+  class_id int
+
+  fee_category_id int
+
+  academic_year_id int
+
+  term_id int
+
+  amount decimal
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// STUDENT INVOICES
+//////////////////////////////////////////////////////
+
+Table student_invoices {
+  invoice_id int [pk]
+
+  student_id int
+
+  academic_year_id int
+
+  term_id int
+
+  invoice_number varchar
+
+  total_amount decimal
+
+  invoice_status varchar
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// INVOICE ITEMS
+//////////////////////////////////////////////////////
+
+Table invoice_items {
+  invoice_item_id int [pk]
+
+  invoice_id int
+
+  fee_category_id int
+
+  amount decimal
+}
+
+//////////////////////////////////////////////////////
+// PAYMENTS
+//////////////////////////////////////////////////////
+
+Table payments {
+  payment_id int [pk]
+
+  student_id int
+
+  invoice_id int
+
+  amount decimal
+
+  payment_method varchar
+
+  transaction_reference varchar
+
+  payment_date timestamp
+
+  recorded_by int
+}
+
+//////////////////////////////////////////////////////
+// RECEIPTS
+//////////////////////////////////////////////////////
+
+Table receipts {
+  receipt_id int [pk]
+
+  payment_id int
+
+  receipt_number varchar
+
+  issued_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// SCHOLARSHIPS
+//////////////////////////////////////////////////////
+
+Table scholarships {
+  scholarship_id int [pk]
+
+  school_id int
+
+  scholarship_name varchar
+
+  sponsor varchar
+
+  description text
+}
+
+//////////////////////////////////////////////////////
+// STUDENT SCHOLARSHIPS
+//////////////////////////////////////////////////////
+
+Table student_scholarships {
+  student_scholarship_id int [pk]
+
+  student_id int
+
+  scholarship_id int
+
+  amount decimal
+
+  start_date date
+
+  end_date date
+}
+
+//////////////////////////////////////////////////////
+// FEE WAIVERS
+//////////////////////////////////////////////////////
+
+Table fee_waivers {
+  waiver_id int [pk]
+
+  student_id int
+
+  amount decimal
+
+  reason text
+
+  approved_by int
+
+  approved_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// RELATIONSHIPS
+//////////////////////////////////////////////////////
+
+Ref: fee_categories.school_id > schools.school_id
+
+Ref: fee_structures.school_id > schools.school_id
+Ref: fee_structures.class_id > classes.class_id
+Ref: fee_structures.fee_category_id > fee_categories.fee_category_id
+Ref: fee_structures.academic_year_id > academic_years.academic_year_id
+Ref: fee_structures.term_id > terms.term_id
+
+Ref: student_invoices.student_id > students.student_id
+Ref: student_invoices.academic_year_id > academic_years.academic_year_id
+Ref: student_invoices.term_id > terms.term_id
+
+Ref: invoice_items.invoice_id > student_invoices.invoice_id
+Ref: invoice_items.fee_category_id > fee_categories.fee_category_id
+
+Ref: payments.student_id > students.student_id
+Ref: payments.invoice_id > student_invoices.invoice_id
+Ref: payments.recorded_by > users.user_id
+
+Ref: receipts.payment_id > payments.payment_id
+
+Ref: scholarships.school_id > schools.school_id
+
+Ref: student_scholarships.student_id > students.student_id
+Ref: student_scholarships.scholarship_id > scholarships.scholarship_id
+
+Ref: fee_waivers.student_id > students.student_id
+Ref: fee_waivers.approved_by > users.user_id
+
+//////////////////////////////////////////////////////
+// EDUNEXUS LAYER 5
+// LIBRARY & BOOK STORE MANAGEMENT
+//////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+// BOOK CATEGORIES
+//////////////////////////////////////////////////////
+
+Table book_categories {
+  category_id int [pk]
+
+  school_id int
+
+  category_name varchar
+
+  description text
+}
+
+//////////////////////////////////////////////////////
+// LIBRARY BOOKS
+//////////////////////////////////////////////////////
+
+Table books {
+  book_id int [pk]
+
+  school_id int
+
+  category_id int
+
+  isbn varchar
+
+  title varchar
+
+  author varchar
+
+  publisher varchar
+
+  publication_year int
+
+  edition varchar
+
+  description text
+
+  total_copies int
+
+  available_copies int
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// PHYSICAL BOOK COPIES
+//////////////////////////////////////////////////////
+
+Table book_copies {
+  copy_id int [pk]
+
+  book_id int
+
+  accession_number varchar
+
+  barcode varchar
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// LIBRARY LOANS
+//////////////////////////////////////////////////////
+
+Table book_loans {
+  loan_id int [pk]
+
+  copy_id int
+
+  student_id int
+
+  issued_by int
+
+  issue_date date
+
+  due_date date
+
+  return_date date
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// BOOK CONDITION CHECKS
+//////////////////////////////////////////////////////
+
+Table book_condition_checks {
+  check_id int [pk]
+
+  loan_id int
+
+  checked_by int
+
+  condition_status varchar
+
+  notes text
+
+  checked_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// BOOK RESERVATIONS
+//////////////////////////////////////////////////////
+
+Table book_reservations {
+  reservation_id int [pk]
+
+  book_id int
+
+  student_id int
+
+  reservation_date timestamp
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// LIBRARY FINES
+//////////////////////////////////////////////////////
+
+Table library_fines {
+  fine_id int [pk]
+
+  loan_id int
+
+  student_id int
+
+  amount decimal
+
+  reason varchar
+
+  paid_status varchar
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// DIGITAL LIBRARY
+//////////////////////////////////////////////////////
+
+Table digital_resources {
+  digital_resource_id int [pk]
+
+  school_id int
+
+  uploaded_by int
+
+  title varchar
+
+  resource_type varchar
+
+  file_url text
+
+  description text
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// BOOK STORE ITEMS
+//////////////////////////////////////////////////////
+
+Table book_store_items {
+  store_item_id int [pk]
+
+  school_id int
+
+  subject_id int
+
+  isbn varchar
+
+  title varchar
+
+  publisher varchar
+
+  edition varchar
+
+  total_quantity int
+
+  available_quantity int
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// BOOK STORE ISSUES
+//////////////////////////////////////////////////////
+
+Table book_store_issues {
+  issue_id int [pk]
+
+  store_item_id int
+
+  student_id int
+
+  issued_by int
+
+  issue_date date
+
+  expected_return_date date
+
+  actual_return_date date
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// LOST / REPLACEMENT TRACKING
+//////////////////////////////////////////////////////
+
+Table book_replacements {
+  replacement_id int [pk]
+
+  issue_id int
+
+  student_id int
+
+  replacement_method varchar
+
+  replacement_notes text
+
+  approved_by int
+
+  replacement_date timestamp
+}
+
+//////////////////////////////////////////////////////
+// RELATIONSHIPS
+//////////////////////////////////////////////////////
+
+Ref: book_categories.school_id > schools.school_id
+
+Ref: books.school_id > schools.school_id
+Ref: books.category_id > book_categories.category_id
+
+Ref: book_copies.book_id > books.book_id
+
+Ref: book_loans.copy_id > book_copies.copy_id
+Ref: book_loans.student_id > students.student_id
+Ref: book_loans.issued_by > users.user_id
+
+Ref: book_condition_checks.loan_id > book_loans.loan_id
+Ref: book_condition_checks.checked_by > users.user_id
+
+Ref: book_reservations.book_id > books.book_id
+Ref: book_reservations.student_id > students.student_id
+
+Ref: library_fines.loan_id > book_loans.loan_id
+Ref: library_fines.student_id > students.student_id
+
+Ref: digital_resources.school_id > schools.school_id
+Ref: digital_resources.uploaded_by > users.user_id
+
+Ref: book_store_items.school_id > schools.school_id
+Ref: book_store_items.subject_id > subjects.subject_id
+
+Ref: book_store_issues.store_item_id > book_store_items.store_item_id
+Ref: book_store_issues.student_id > students.student_id
+Ref: book_store_issues.issued_by > users.user_id
+
+Ref: book_replacements.issue_id > book_store_issues.issue_id
+Ref: book_replacements.student_id > students.student_id
+Ref: book_replacements.approved_by > users.user_id
+
+//////////////////////////////////////////////////////
+// EDUNEXUS LAYER 6
+// HOSTEL & BOARDING MANAGEMENT
+//////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+// HOSTELS
+//////////////////////////////////////////////////////
+
+Table hostels {
+  hostel_id int [pk]
+
+  school_id int
+
+  hostel_name varchar
+
+  hostel_type varchar
+  gender_type varchar
+
+  capacity int
+
+  description text
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// ROOMS
+//////////////////////////////////////////////////////
+
+Table rooms {
+  room_id int [pk]
+
+  hostel_id int
+
+  room_name varchar
+
+  floor_number int
+
+  capacity int
+}
+
+//////////////////////////////////////////////////////
+// BEDS
+//////////////////////////////////////////////////////
+
+Table beds {
+  bed_id int [pk]
+
+  room_id int
+
+  bed_number varchar
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// HOSTEL STAFF
+//////////////////////////////////////////////////////
+
+Table hostel_staff {
+  hostel_staff_id int [pk]
+
+  hostel_id int
+
+  staff_id int
+
+  role varchar
+
+  assigned_date date
+}
+
+//////////////////////////////////////////////////////
+// BOARDING STUDENTS
+//////////////////////////////////////////////////////
+
+Table boarding_students {
+  boarding_student_id int [pk]
+
+  student_id int
+
+  boarding_status varchar
+
+  joining_date date
+
+  leaving_date date
+}
+
+//////////////////////////////////////////////////////
+// BED ASSIGNMENTS
+//////////////////////////////////////////////////////
+
+Table bed_assignments {
+  assignment_id int [pk]
+
+  student_id int
+
+  bed_id int
+
+  assigned_by int
+
+  assigned_date date
+
+  end_date date
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// HOSTEL ROLL CALLS
+//////////////////////////////////////////////////////
+
+Table hostel_roll_calls {
+  roll_call_id int [pk]
+
+  hostel_id int
+
+  conducted_by int
+
+  roll_call_date timestamp
+
+  session varchar
+
+  remarks text
+}
+
+//////////////////////////////////////////////////////
+// ROLL CALL ATTENDANCE
+//////////////////////////////////////////////////////
+
+Table hostel_roll_call_attendance {
+  attendance_id int [pk]
+
+  roll_call_id int
+
+  student_id int
+
+  status varchar
+
+  remarks text
+}
+
+//////////////////////////////////////////////////////
+// LEAVE OUT REQUESTS
+//////////////////////////////////////////////////////
+
+Table leave_out_requests {
+  leave_request_id int [pk]
+
+  student_id int
+
+  approved_by int
+
+  departure_time timestamp
+
+  expected_return_time timestamp
+
+  actual_return_time timestamp
+
+  parent_confirmation boolean
+
+  reason text
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// HOSTEL INSPECTIONS
+//////////////////////////////////////////////////////
+
+Table hostel_inspections {
+  inspection_id int [pk]
+
+  hostel_id int
+
+  inspected_by int
+
+  inspection_date timestamp
+
+  inspection_type varchar
+
+  remarks text
+}
+
+//////////////////////////////////////////////////////
+// INSPECTION RESULTS
+//////////////////////////////////////////////////////
+
+Table hostel_inspection_results {
+  result_id int [pk]
+
+  inspection_id int
+
+  student_id int
+
+  score decimal
+
+  remarks text
+}
+
+//////////////////////////////////////////////////////
+// HOSTEL DISCIPLINE
+//////////////////////////////////////////////////////
+
+Table hostel_discipline_records {
+  discipline_id int [pk]
+
+  student_id int
+
+  reported_by int
+
+  incident_date timestamp
+
+  incident_type varchar
+
+  description text
+
+  action_taken text
+}
+
+//////////////////////////////////////////////////////
+// HOSTEL MAINTENANCE
+//////////////////////////////////////////////////////
+
+Table hostel_maintenance_requests {
+  request_id int [pk]
+
+  hostel_id int
+
+  room_id int
+
+  reported_by int
+
+  issue_type varchar
+
+  description text
+
+  status varchar
+
+  reported_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// VISITOR LOGS
+//////////////////////////////////////////////////////
+
+Table hostel_visitors {
+  visitor_id int [pk]
+
+  student_id int
+
+  visitor_name varchar
+
+  relationship varchar
+
+  national_id varchar
+
+  phone varchar
+
+  visit_date timestamp
+
+  approved_by int
+}
+
+//////////////////////////////////////////////////////
+// RELATIONSHIPS
+//////////////////////////////////////////////////////
+
+Ref: hostels.school_id > schools.school_id
+
+Ref: rooms.hostel_id > hostels.hostel_id
+
+Ref: beds.room_id > rooms.room_id
+
+Ref: hostel_staff.hostel_id > hostels.hostel_id
+Ref: hostel_staff.staff_id > staff.staff_id
+
+Ref: boarding_students.student_id > students.student_id
+
+Ref: bed_assignments.student_id > students.student_id
+Ref: bed_assignments.bed_id > beds.bed_id
+Ref: bed_assignments.assigned_by > users.user_id
+
+Ref: hostel_roll_calls.hostel_id > hostels.hostel_id
+Ref: hostel_roll_calls.conducted_by > users.user_id
+
+Ref: hostel_roll_call_attendance.roll_call_id > hostel_roll_calls.roll_call_id
+Ref: hostel_roll_call_attendance.student_id > students.student_id
+
+Ref: leave_out_requests.student_id > students.student_id
+Ref: leave_out_requests.approved_by > users.user_id
+
+Ref: hostel_inspections.hostel_id > hostels.hostel_id
+Ref: hostel_inspections.inspected_by > users.user_id
+
+Ref: hostel_inspection_results.inspection_id > hostel_inspections.inspection_id
+Ref: hostel_inspection_results.student_id > students.student_id
+
+Ref: hostel_discipline_records.student_id > students.student_id
+Ref: hostel_discipline_records.reported_by > users.user_id
+
+Ref: hostel_maintenance_requests.hostel_id > hostels.hostel_id
+Ref: hostel_maintenance_requests.room_id > rooms.room_id
+Ref: hostel_maintenance_requests.reported_by > users.user_id
+
+Ref: hostel_visitors.student_id > students.student_id
+Ref: hostel_visitors.approved_by > users.user_id
+
+//////////////////////////////////////////////////////
+// EDUNEXUS LAYER 7
+// CLUBS, SPORTS & STUDENT ACTIVITIES
+//////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+// SCHOOL HOUSES
+//////////////////////////////////////////////////////
+
+Table houses {
+  house_id int [pk]
+
+  school_id int
+
+  house_name varchar
+
+  house_color varchar
+
+  description text
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// STUDENT HOUSE ASSIGNMENTS
+//////////////////////////////////////////////////////
+
+Table student_houses {
+  student_house_id int [pk]
+
+  student_id int
+
+  house_id int
+
+  assigned_date date
+}
+
+//////////////////////////////////////////////////////
+// CLUBS & SOCIETIES
+//////////////////////////////////////////////////////
+
+Table clubs {
+  club_id int [pk]
+
+  school_id int
+
+  club_name varchar
+
+  club_type varchar
+
+  patron_staff_id int
+
+  description text
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// CLUB MEMBERSHIPS
+//////////////////////////////////////////////////////
+
+Table club_memberships {
+  membership_id int [pk]
+
+  club_id int
+
+  student_id int
+
+  joined_date date
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// CLUB LEADERSHIP
+//////////////////////////////////////////////////////
+
+Table club_leaders {
+  leader_id int [pk]
+
+  club_id int
+
+  student_id int
+
+  leadership_role varchar
+
+  start_date date
+
+  end_date date
+}
+
+//////////////////////////////////////////////////////
+// SPORTS TEAMS
+//////////////////////////////////////////////////////
+
+Table sports_teams {
+  team_id int [pk]
+
+  school_id int
+
+  team_name varchar
+
+  sport_type varchar
+
+  coach_staff_id int
+
+  description text
+}
+
+//////////////////////////////////////////////////////
+// SPORTS MEMBERS
+//////////////////////////////////////////////////////
+
+Table sports_team_members {
+  team_member_id int [pk]
+
+  team_id int
+
+  student_id int
+
+  joined_date date
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// STUDENT LEADERSHIP
+//////////////////////////////////////////////////////
+
+Table student_leadership_positions {
+  position_id int [pk]
+
+  school_id int
+
+  position_name varchar
+
+  description text
+}
+
+//////////////////////////////////////////////////////
+// STUDENT LEADERS
+//////////////////////////////////////////////////////
+
+Table student_leaders {
+  student_leader_id int [pk]
+
+  student_id int
+
+  position_id int
+
+  appointed_date date
+
+  end_date date
+}
+
+//////////////////////////////////////////////////////
+// EVENTS
+//////////////////////////////////////////////////////
+
+Table events {
+  event_id int [pk]
+
+  school_id int
+
+  event_name varchar
+
+  event_type varchar
+
+  start_date timestamp
+
+  end_date timestamp
+
+  location varchar
+
+  description text
+
+  created_by int
+}
+
+//////////////////////////////////////////////////////
+// EVENT PARTICIPANTS
+//////////////////////////////////////////////////////
+
+Table event_participants {
+  participant_id int [pk]
+
+  event_id int
+
+  student_id int
+
+  participation_role varchar
+}
+
+//////////////////////////////////////////////////////
+// COMPETITIONS
+//////////////////////////////////////////////////////
+
+Table competitions {
+  competition_id int [pk]
+
+  school_id int
+
+  competition_name varchar
+
+  competition_type varchar
+
+  organizer varchar
+
+  competition_date date
+
+  description text
+}
+
+//////////////////////////////////////////////////////
+// COMPETITION PARTICIPANTS
+//////////////////////////////////////////////////////
+
+Table competition_participants {
+  competition_participant_id int [pk]
+
+  competition_id int
+
+  student_id int
+
+  result varchar
+
+  award varchar
+}
+
+//////////////////////////////////////////////////////
+// ACHIEVEMENTS
+//////////////////////////////////////////////////////
+
+Table achievements {
+  achievement_id int [pk]
+
+  student_id int
+
+  title varchar
+
+  category varchar
+
+  description text
+
+  achievement_date date
+}
+
+//////////////////////////////////////////////////////
+// CERTIFICATES
+//////////////////////////////////////////////////////
+
+Table certificates {
+  certificate_id int [pk]
+
+  student_id int
+
+  achievement_id int
+
+  certificate_url text
+
+  issued_date date
+}
+
+//////////////////////////////////////////////////////
+// RELATIONSHIPS
+//////////////////////////////////////////////////////
+
+Ref: houses.school_id > schools.school_id
+
+Ref: student_houses.student_id > students.student_id
+Ref: student_houses.house_id > houses.house_id
+
+Ref: clubs.school_id > schools.school_id
+Ref: clubs.patron_staff_id > staff.staff_id
+
+Ref: club_memberships.club_id > clubs.club_id
+Ref: club_memberships.student_id > students.student_id
+
+Ref: club_leaders.club_id > clubs.club_id
+Ref: club_leaders.student_id > students.student_id
+
+Ref: sports_teams.school_id > schools.school_id
+Ref: sports_teams.coach_staff_id > staff.staff_id
+
+Ref: sports_team_members.team_id > sports_teams.team_id
+Ref: sports_team_members.student_id > students.student_id
+
+Ref: student_leadership_positions.school_id > schools.school_id
+
+Ref: student_leaders.student_id > students.student_id
+Ref: student_leaders.position_id > student_leadership_positions.position_id
+
+Ref: events.school_id > schools.school_id
+Ref: events.created_by > users.user_id
+
+Ref: event_participants.event_id > events.event_id
+Ref: event_participants.student_id > students.student_id
+
+Ref: competitions.school_id > schools.school_id
+
+Ref: competition_participants.competition_id > competitions.competition_id
+Ref: competition_participants.student_id > students.student_id
+
+Ref: achievements.student_id > students.student_id
+
+Ref: certificates.student_id > students.student_id
+Ref: certificates.achievement_id > achievements.achievement_id
+
+
+//////////////////////////////////////////////////////
+// EDUNEXUS LAYER 7
+// CLUBS, SPORTS & STUDENT ACTIVITIES
+//////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+// SCHOOL HOUSES
+//////////////////////////////////////////////////////
+
+Table houses {
+  house_id int [pk]
+
+  school_id int
+
+  house_name varchar
+
+  house_color varchar
+
+  description text
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// STUDENT HOUSE ASSIGNMENTS
+//////////////////////////////////////////////////////
+
+Table student_houses {
+  student_house_id int [pk]
+
+  student_id int
+
+  house_id int
+
+  assigned_date date
+}
+
+//////////////////////////////////////////////////////
+// CLUBS & SOCIETIES
+//////////////////////////////////////////////////////
+
+Table clubs {
+  club_id int [pk]
+
+  school_id int
+
+  club_name varchar
+
+  club_type varchar
+
+  patron_staff_id int
+
+  description text
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// CLUB MEMBERSHIPS
+//////////////////////////////////////////////////////
+
+Table club_memberships {
+  membership_id int [pk]
+
+  club_id int
+
+  student_id int
+
+  joined_date date
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// CLUB LEADERSHIP
+//////////////////////////////////////////////////////
+
+Table club_leaders {
+  leader_id int [pk]
+
+  club_id int
+
+  student_id int
+
+  leadership_role varchar
+
+  start_date date
+
+  end_date date
+}
+
+//////////////////////////////////////////////////////
+// SPORTS TEAMS
+//////////////////////////////////////////////////////
+
+Table sports_teams {
+  team_id int [pk]
+
+  school_id int
+
+  team_name varchar
+
+  sport_type varchar
+
+  coach_staff_id int
+
+  description text
+}
+
+//////////////////////////////////////////////////////
+// SPORTS MEMBERS
+//////////////////////////////////////////////////////
+
+Table sports_team_members {
+  team_member_id int [pk]
+
+  team_id int
+
+  student_id int
+
+  joined_date date
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// STUDENT LEADERSHIP
+//////////////////////////////////////////////////////
+
+Table student_leadership_positions {
+  position_id int [pk]
+
+  school_id int
+
+  position_name varchar
+
+  description text
+}
+
+//////////////////////////////////////////////////////
+// STUDENT LEADERS
+//////////////////////////////////////////////////////
+
+Table student_leaders {
+  student_leader_id int [pk]
+
+  student_id int
+
+  position_id int
+
+  appointed_date date
+
+  end_date date
+}
+
+//////////////////////////////////////////////////////
+// EVENTS
+//////////////////////////////////////////////////////
+
+Table events {
+  event_id int [pk]
+
+  school_id int
+
+  event_name varchar
+
+  event_type varchar
+
+  start_date timestamp
+
+  end_date timestamp
+
+  location varchar
+
+  description text
+
+  created_by int
+}
+
+//////////////////////////////////////////////////////
+// EVENT PARTICIPANTS
+//////////////////////////////////////////////////////
+
+Table event_participants {
+  participant_id int [pk]
+
+  event_id int
+
+  student_id int
+
+  participation_role varchar
+}
+
+//////////////////////////////////////////////////////
+// COMPETITIONS
+//////////////////////////////////////////////////////
+
+Table competitions {
+  competition_id int [pk]
+
+  school_id int
+
+  competition_name varchar
+
+  competition_type varchar
+
+  organizer varchar
+
+  competition_date date
+
+  description text
+}
+
+//////////////////////////////////////////////////////
+// COMPETITION PARTICIPANTS
+//////////////////////////////////////////////////////
+
+Table competition_participants {
+  competition_participant_id int [pk]
+
+  competition_id int
+
+  student_id int
+
+  result varchar
+
+  award varchar
+}
+
+//////////////////////////////////////////////////////
+// ACHIEVEMENTS
+//////////////////////////////////////////////////////
+
+Table achievements {
+  achievement_id int [pk]
+
+  student_id int
+
+  title varchar
+
+  category varchar
+
+  description text
+
+  achievement_date date
+}
+
+//////////////////////////////////////////////////////
+// CERTIFICATES
+//////////////////////////////////////////////////////
+
+Table certificates {
+  certificate_id int [pk]
+
+  student_id int
+
+  achievement_id int
+
+  certificate_url text
+
+  issued_date date
+}
+
+//////////////////////////////////////////////////////
+// RELATIONSHIPS
+//////////////////////////////////////////////////////
+
+Ref: houses.school_id > schools.school_id
+
+Ref: student_houses.student_id > students.student_id
+Ref: student_houses.house_id > houses.house_id
+
+Ref: clubs.school_id > schools.school_id
+Ref: clubs.patron_staff_id > staff.staff_id
+
+Ref: club_memberships.club_id > clubs.club_id
+Ref: club_memberships.student_id > students.student_id
+
+Ref: club_leaders.club_id > clubs.club_id
+Ref: club_leaders.student_id > students.student_id
+
+Ref: sports_teams.school_id > schools.school_id
+Ref: sports_teams.coach_staff_id > staff.staff_id
+
+Ref: sports_team_members.team_id > sports_teams.team_id
+Ref: sports_team_members.student_id > students.student_id
+
+Ref: student_leadership_positions.school_id > schools.school_id
+
+Ref: student_leaders.student_id > students.student_id
+Ref: student_leaders.position_id > student_leadership_positions.position_id
+
+Ref: events.school_id > schools.school_id
+Ref: events.created_by > users.user_id
+
+Ref: event_participants.event_id > events.event_id
+Ref: event_participants.student_id > students.student_id
+
+Ref: competitions.school_id > schools.school_id
+
+Ref: competition_participants.competition_id > competitions.competition_id
+Ref: competition_participants.student_id > students.student_id
+
+Ref: achievements.student_id > students.student_id
+
+Ref: certificates.student_id > students.student_id
+Ref: certificates.achievement_id > achievements.achievement_id
+
+
+//////////////////////////////////////////////////////
+// EDUNEXUS LAYER 8
+// OPPORTUNET
+//////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+// OPPORTUNITY PROVIDERS
+//////////////////////////////////////////////////////
+
+Table opportunity_providers {
+  provider_id int [pk]
+
+  provider_name varchar
+
+  provider_type varchar
+
+  website varchar
+
+  email varchar
+
+  country varchar
+
+  description text
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// OPPORTUNITIES
+//////////////////////////////////////////////////////
+
+Table opportunities {
+  opportunity_id int [pk]
+
+  provider_id int
+
+  // CORE DATA (from external sources)
+  title varchar
+  description text
+  category varchar
+  level varchar
+  country varchar
+
+  application_link text
+  application_deadline date
+
+  start_date date
+  end_date date
+
+  eligibility text
+  benefits text
+
+  status varchar
+
+  // RAW INGESTION CONTROL (for Opportunet pipeline)
+  source_type varchar        // scraped, manual, api
+  external_id varchar        // original ID from provider
+  is_verified boolean
+
+  // AI / OPPORTUNET LAYER
+  embedding vector           // optional AI semantic search
+  match_score_avg decimal
+
+  created_at timestamp
+  updated_at timestamp
+}
+//////////////////////////////////////////////////////
+// OPPORTUNITY TAGS
+//////////////////////////////////////////////////////
+
+Table opportunity_tags {
+  tag_id int [pk]
+
+  tag_name varchar
+}
+
+//////////////////////////////////////////////////////
+// OPPORTUNITY TAG MAPPING
+//////////////////////////////////////////////////////
+
+Table opportunity_tag_mappings {
+  mapping_id int [pk]
+
+  opportunity_id int
+
+  tag_id int
+}
+
+//////////////////////////////////////////////////////
+// STUDENT INTERESTS
+//////////////////////////////////////////////////////
+
+Table student_interests {
+  interest_id int [pk]
+
+  student_id int
+
+  interest_name varchar
+}
+
+//////////////////////////////////////////////////////
+// SAVED OPPORTUNITIES
+//////////////////////////////////////////////////////
+
+Table saved_opportunities {
+  saved_id int [pk]
+
+  student_id int
+
+  opportunity_id int
+
+  saved_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// APPLICATIONS
+//////////////////////////////////////////////////////
+
+Table applications {
+  application_id int [pk]
+
+  student_id int
+
+  opportunity_id int
+
+  application_status varchar
+
+  submitted_at timestamp
+
+  updated_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// APPLICATION DOCUMENTS
+//////////////////////////////////////////////////////
+
+Table application_documents {
+  document_id int [pk]
+
+  application_id int
+
+  document_type varchar
+
+  file_url text
+
+  uploaded_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// APPLICATION TASKS
+//////////////////////////////////////////////////////
+
+Table application_tasks {
+  task_id int [pk]
+
+  application_id int
+
+  task_title varchar
+
+  due_date date
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// MENTORS
+//////////////////////////////////////////////////////
+
+Table mentors {
+  mentor_id int [pk]
+
+  first_name varchar
+
+  last_name varchar
+
+  email varchar
+
+  profession varchar
+
+  organization varchar
+
+  country varchar
+
+  bio text
+}
+
+//////////////////////////////////////////////////////
+// STUDENT MENTORS
+//////////////////////////////////////////////////////
+
+Table student_mentors {
+  student_mentor_id int [pk]
+
+  student_id int
+
+  mentor_id int
+
+  assigned_date date
+}
+
+//////////////////////////////////////////////////////
+// RECOMMENDATION REQUESTS
+//////////////////////////////////////////////////////
+
+Table recommendation_requests {
+  recommendation_id int [pk]
+
+  student_id int
+
+  requested_from int
+
+  opportunity_id int
+
+  request_date timestamp
+
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// STUDENT PROFILES
+//////////////////////////////////////////////////////
+
+Table student_profiles {
+  profile_id int [pk]
+
+  student_id int
+
+  bio text
+
+  intended_major varchar
+
+  career_interest varchar
+
+  linkedin_url varchar
+
+  portfolio_url varchar
+
+  resume_url varchar
+
+  updated_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// OPPORTUNITY MATCHES
+//////////////////////////////////////////////////////
+
+Table opportunity_matches {
+  match_id int [pk]
+
+  student_id int
+
+  opportunity_id int
+
+  match_score decimal
+
+  generated_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// RELATIONSHIPS
+//////////////////////////////////////////////////////
+
+Ref: opportunities.provider_id > opportunity_providers.provider_id
+
+Ref: opportunity_tag_mappings.opportunity_id > opportunities.opportunity_id
+Ref: opportunity_tag_mappings.tag_id > opportunity_tags.tag_id
+
+Ref: student_interests.student_id > students.student_id
+
+Ref: saved_opportunities.student_id > students.student_id
+Ref: saved_opportunities.opportunity_id > opportunities.opportunity_id
+
+Ref: applications.student_id > students.student_id
+Ref: applications.opportunity_id > opportunities.opportunity_id
+
+Ref: application_documents.application_id > applications.application_id
+
+Ref: application_tasks.application_id > applications.application_id
+
+Ref: student_mentors.student_id > students.student_id
+Ref: student_mentors.mentor_id > mentors.mentor_id
+
+Ref: recommendation_requests.student_id > students.student_id
+Ref: recommendation_requests.requested_from > users.user_id
+Ref: recommendation_requests.opportunity_id > opportunities.opportunity_id
+
+Ref: student_profiles.student_id > students.student_id
+
+Ref: opportunity_matches.student_id > students.student_id
+Ref: opportunity_matches.opportunity_id > opportunities.opportunity_id
+
+
+//////////////////////////////////////////////////////
+// EDUNEXUS LAYER 9
+// AI & ANALYTICS ENGINE (BRAIN LAYER)
+//////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+// STUDENT AI PROFILES
+//////////////////////////////////////////////////////
+
+Table student_ai_profiles {
+  ai_profile_id int [pk]
+
+  student_id int
+
+  academic_performance_score decimal
+  discipline_score decimal
+  attendance_score decimal
+
+  engagement_score decimal
+  extracurricular_score decimal
+
+  financial_risk_score decimal
+  dropout_risk_score decimal
+  career_readiness_score decimal
+
+  updated_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// LEARNING INSIGHTS (PERFORMANCE + WEAK AREAS)
+//////////////////////////////////////////////////////
+
+Table learning_insights {
+  insight_id int [pk]
+
+  student_id int
+  subject_id int
+
+  weak_topics text
+  strong_topics text
+
+  predicted_grade varchar
+  improvement_suggestions text
+
+  confidence_score decimal
+
+  generated_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// RISK PREDICTIONS (DROPOUT / FAILURE / DISCIPLINE)
+//////////////////////////////////////////////////////
+
+Table risk_predictions {
+  risk_id int [pk]
+
+  student_id int
+
+  risk_type varchar
+  risk_score decimal
+  risk_level varchar
+
+  contributing_factors text
+  recommended_actions text
+
+  generated_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// OPPORTUNITY RECOMMENDATIONS (OPPORTUNET AI CORE)
+//////////////////////////////////////////////////////
+
+Table opportunity_recommendations {
+  recommendation_id int [pk]
+
+  student_id int
+  opportunity_id int
+
+  match_score decimal
+  reasoning text
+
+  skill_gap_analysis text
+
+  generated_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// PERSONALIZED LEARNING PATHS
+//////////////////////////////////////////////////////
+
+Table learning_paths {
+  path_id int [pk]
+
+  student_id int
+
+  goal varchar
+  target_career varchar
+
+  recommended_subjects text
+  recommended_skills text
+
+  timeline_weeks int
+
+  completion_status varchar
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// SCHOOL AI DASHBOARD METRICS (ADMIN OVERVIEW)
+//////////////////////////////////////////////////////
+
+Table school_ai_dashboards {
+  dashboard_id int [pk]
+
+  school_id int
+  academic_year_id int
+
+  total_students int
+
+  average_score decimal
+  pass_rate decimal
+  fail_rate decimal
+
+  top_subject varchar
+  weakest_subject varchar
+
+  attendance_rate decimal
+  discipline_index decimal
+
+  generated_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// BEHAVIOR PATTERNS (STUDENT ACTION ANALYTICS)
+//////////////////////////////////////////////////////
+
+Table behavior_patterns {
+  pattern_id int [pk]
+
+  student_id int
+
+  pattern_type varchar
+  frequency_score decimal
+
+  trend varchar
+
+  detected_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// AI SUMMARIES (GENERATED REPORTS)
+//////////////////////////////////////////////////////
+
+Table ai_summaries {
+  summary_id int [pk]
+
+  scope_type varchar
+  scope_id int
+
+  title varchar
+
+  summary_text text
+  insights text
+
+  generated_at timestamp
+  generated_by varchar
+}
+
+//////////////////////////////////////////////////////
+// CHART DATASETS (FOR VISUAL DASHBOARDS)
+//////////////////////////////////////////////////////
+
+Table ai_chart_datasets {
+  dataset_id int [pk]
+
+  scope_type varchar
+  scope_id int
+
+  chart_type varchar
+  chart_title varchar
+
+  data json
+
+  generated_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// RECOMMENDATION FEEDBACK LOOP (AI IMPROVEMENT)
+//////////////////////////////////////////////////////
+
+Table recommendation_feedback {
+  feedback_id int [pk]
+
+  student_id int
+
+  recommendation_type varchar
+  reference_id int
+
+  rating int
+  clicked boolean
+  applied boolean
+
+  feedback_text text
+
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// AI MODEL PERFORMANCE TRACKING
+//////////////////////////////////////////////////////
+
+Table ai_model_metrics {
+  model_metric_id int [pk]
+
+  model_name varchar
+
+  accuracy decimal
+  precision_score decimal
+  recall_score decimal
+
+  training_data_version varchar
+
+  last_trained_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// REAL-TIME AI EVENT STREAM (SYSTEM LOGIC LAYER)
+//////////////////////////////////////////////////////
+
+Table ai_event_stream {
+  event_id int [pk]
+
+  entity_type varchar
+  entity_id int
+
+  event_type varchar
+
+  weight_score decimal
+
+  processed boolean
+
+  timestamp timestamp
+}
+
+//////////////////////////////////////////////////////
+// RELATIONSHIPS
+//////////////////////////////////////////////////////
+
+Ref: student_ai_profiles.student_id > students.student_id
+
+Ref: learning_insights.student_id > students.student_id
+Ref: learning_insights.subject_id > subjects.subject_id
+
+Ref: risk_predictions.student_id > students.student_id
+
+Ref: opportunity_recommendations.student_id > students.student_id
+Ref: opportunity_recommendations.opportunity_id > opportunities.opportunity_id
+
+Ref: learning_paths.student_id > students.student_id
+
+Ref: school_ai_dashboards.school_id > schools.school_id
+Ref: school_ai_dashboards.academic_year_id > academic_years.academic_year_id
+
+Ref: behavior_patterns.student_id > students.student_id
+
+Ref: recommendation_feedback.student_id > students.student_id
+
+Ref: ai_summaries.scope_id > students.student_id
+
+Ref: ai_chart_datasets.scope_id > students.student_id
+
+
+//////////////////////////////////////////////////////
+// EDUNEXUS LAYER 10
+// GOVERNANCE, SECURITY, IAM, UI ENGINE & AI CONTROL PLANE
+//////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////
+// FEATURE FLAGS (SCHOOL-CAPABILITY CONTROL)
+//////////////////////////////////////////////////////
+
+Table school_features {
+  feature_id int [pk]
+  school_id int
+  feature_key varchar
+  feature_name varchar
+  is_enabled boolean
+  configuration json
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// IAM CORE (AWS-STYLE PERMISSION ENGINE)
+//////////////////////////////////////////////////////
+
+Table actions {
+  action_id int [pk]
+  action_key varchar
+  description text
+}
+
+//////////////////////////////////////////////////////
+// FIXED: renamed from "resources" → iam_resources
+//////////////////////////////////////////////////////
+
+Table iam_resources {
+  resource_id int [pk]
+  resource_type varchar
+  resource_scope varchar
+}
+
+Table policies {
+  policy_id int [pk]
+  policy_name varchar
+  effect varchar
+  created_at timestamp
+}
+
+Table policy_statements {
+  statement_id int [pk]
+  policy_id int
+  action_id int
+  resource_type varchar
+  condition json
+}
+
+Table role_policies {
+  role_policy_id int [pk]
+  role_id int
+  policy_id int
+}
+
+Table user_policies {
+  user_policy_id int [pk]
+  user_id int
+  policy_id int
+}
+
+//////////////////////////////////////////////////////
+// USER-LEVEL FEATURE CONTROL
+//////////////////////////////////////////////////////
+
+Table user_feature_access {
+  access_id int [pk]
+  user_id int
+  feature_key varchar
+  is_allowed boolean
+  reason varchar
+  granted_by int
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// AUDIT & COMPLIANCE LOGGING
+//////////////////////////////////////////////////////
+
+Table audit_logs {
+  audit_id int [pk]
+  user_id int
+  action_type varchar
+  entity_type varchar
+  entity_id int
+  old_value text
+  new_value text
+  ip_address varchar
+  device_info text
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// SECURITY & SESSION MANAGEMENT
+//////////////////////////////////////////////////////
+
+Table user_sessions {
+  session_id int [pk]
+  user_id int
+  device_id varchar
+  ip_address varchar
+  login_time timestamp
+  logout_time timestamp
+  is_active boolean
+}
+
+Table suspicious_activity_logs {
+  activity_id int [pk]
+  user_id int
+  activity_type varchar
+  risk_level varchar
+  description text
+  detected_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// EXAM INTEGRITY (DEVICE-OPTIONAL MODULE)
+//////////////////////////////////////////////////////
+
+Table exam_sessions {
+  session_id int [pk]
+  exam_id int
+  student_id int
+  start_time timestamp
+  end_time timestamp
+  device_fingerprint varchar
+  flagged boolean
+}
+
+Table cheating_flags {
+  flag_id int [pk]
+  session_id int
+  flag_type varchar
+  severity varchar
+  evidence text
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// PARENT ENGAGEMENT ANALYTICS
+//////////////////////////////////////////////////////
+
+Table parent_engagement {
+  engagement_id int [pk]
+  parent_id int
+  messages_opened int
+  meetings_attended int
+  payments_on_time boolean
+  engagement_score decimal
+  last_updated timestamp
+}
+
+//////////////////////////////////////////////////////
+// AI EXPLANATION LAYER
+//////////////////////////////////////////////////////
+
+Table ai_explanations {
+  explanation_id int [pk]
+  reference_type varchar
+  reference_id int
+  model_name varchar
+  explanation_text text
+  feature_importance json
+  generated_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// TRANSPORT SYSTEM (OPTIONAL)
+//////////////////////////////////////////////////////
+
+Table transport_routes {
+  route_id int [pk]
+  school_id int
+  route_name varchar
+  driver_name varchar
+  vehicle_number varchar
+  capacity int
+}
+
+Table transport_tracking {
+  tracking_id int [pk]
+  route_id int
+  student_id int
+  pickup_time timestamp
+  dropoff_time timestamp
+  status varchar
+}
+
+//////////////////////////////////////////////////////
+// INVENTORY
+//////////////////////////////////////////////////////
+
+Table inventory_items {
+  item_id int [pk]
+  school_id int
+  item_name varchar
+  category varchar
+  quantity int
+  reorder_level int
+  last_updated timestamp
+}
+
+//////////////////////////////////////////////////////
+// MEAL SYSTEM (ABSTRACT - NOT CAFETERIA DEPENDENT)
+//////////////////////////////////////////////////////
+
+Table meal_services {
+  service_id int [pk]
+  school_id int
+  service_type varchar
+  name varchar
+  description text
+  is_active boolean
+  created_at timestamp
+}
+
+Table meals {
+  meal_id int [pk]
+  school_id int
+  service_id int
+  meal_name varchar
+  meal_type varchar
+  serving_time time
+  meal_date date
+  cost decimal
+}
+
+Table student_meal_records {
+  record_id int [pk]
+  student_id int
+  meal_id int
+  consumed boolean
+  payment_status varchar
+  recorded_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// API INTEGRATION LAYER
+//////////////////////////////////////////////////////
+
+Table api_integrations {
+  integration_id int [pk]
+  school_id int
+  provider_name varchar
+  api_key varchar
+  status varchar
+  last_sync timestamp
+}
+
+Table external_data_sync {
+  sync_id int [pk]
+  integration_id int
+  data_type varchar
+  status varchar
+  synced_at timestamp
+}
+
+//////////////////////////////////////////////////////
+// UI AUTO-GENERATION ENGINE
+//////////////////////////////////////////////////////
+
+Table ui_layouts {
+  layout_id int [pk]
+  role varchar
+  school_type varchar
+  layout_name varchar
+  theme json
+  created_at timestamp
+}
+
+Table ui_components {
+  component_id int [pk]
+  component_key varchar
+  component_type varchar
+  data_source varchar
+  config json
+}
+
+Table layout_components {
+  id int [pk]
+  layout_id int
+  component_id int
+  position int
+  visibility_condition json
+}
+
+//////////////////////////////////////////////////////
+// AI NEXT-ACTION ENGINE
+//////////////////////////////////////////////////////
+
+Table ai_user_events {
+  event_id int [pk]
+  user_id int
+  event_type varchar
+  entity_type varchar
+  entity_id int
+  weight decimal
+  created_at timestamp
+}
+
+Table ai_next_actions {
+  action_id int [pk]
+  user_id int
+  action_type varchar
+  title varchar
+  description text
+  priority_score decimal
+  expiry_time timestamp
+  triggered_by varchar
+}
+
+//////////////////////////////////////////////////////
+// RELATIONSHIPS
+//////////////////////////////////////////////////////
+
+Ref: school_features.school_id > schools.school_id
+
+Ref: role_policies.role_id > roles.role_id
+Ref: role_policies.policy_id > policies.policy_id
+
+Ref: user_policies.user_id > users.user_id
+Ref: user_policies.policy_id > policies.policy_id
+
+Ref: user_feature_access.user_id > users.user_id
+
+Ref: audit_logs.user_id > users.user_id
+
+Ref: user_sessions.user_id > users.user_id
+Ref: suspicious_activity_logs.user_id > users.user_id
+
+Ref: exam_sessions.exam_id > exams.exam_id
+Ref: exam_sessions.student_id > students.student_id
+
+Ref: cheating_flags.session_id > exam_sessions.session_id
+
+Ref: parent_engagement.parent_id > parents.parent_id
+
+Ref: ai_explanations.reference_id > students.student_id
+
+Ref: transport_routes.school_id > schools.school_id
+Ref: transport_tracking.route_id > transport_routes.route_id
+Ref: transport_tracking.student_id > students.student_id
+
+Ref: inventory_items.school_id > schools.school_id
+
+Ref: meal_services.school_id > schools.school_id
+Ref: meals.school_id > schools.school_id
+Ref: student_meal_records.student_id > students.student_id
+Ref: student_meal_records.meal_id > meals.meal_id
+
+Ref: api_integrations.school_id > schools.school_id
+Ref: external_data_sync.integration_id > api_integrations.integration_id
+
+Ref: ui_layouts.role > roles.role_name
+Ref: layout_components.layout_id > ui_layouts.layout_id
+Ref: layout_components.component_id > ui_components.component_id
+
+Ref: ai_user_events.user_id > users.user_id
+Ref: ai_next_actions.user_id > users.user_id
